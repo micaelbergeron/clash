@@ -1,0 +1,29 @@
+{
+  "name": "clash",
+  "version": "1.0.0",
+  "description": "A D&D 3.5 combat tracker inspired on IniTracker.",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dev_dependencies": {
+    "coffee-script": "*"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/micaelbergeron/clash.git"
+  },
+  "keywords": [
+    "d&d",
+    "dnd"
+  ],
+  "author": "Micaël Bergeron",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/micaelbergeron/clash/issues"
+  },
+  "homepage": "https://github.com/micaelbergeron/clash#readme",
+  "dependencies": {
+    "blessed": "^0.1.81"
+  }
+}
