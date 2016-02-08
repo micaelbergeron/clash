@@ -1,0 +1,7 @@
+{
+  "generator-react-webpack": {
+    "appName": "clash",
+    "style": "scss",
+    "postcss": false
+  }
+}
