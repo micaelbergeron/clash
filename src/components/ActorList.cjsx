@@ -1,13 +1,13 @@
-require('styles/InitiativeList.scss')
+require('styles/ActorList.scss')
 
 mousetrap = require('mousetrap')
   
 React = require('react')
-InitiativeEntry = require('./InitiativeEntry')
+ActorEntry = require('./ActorEntry')
 Keycap = require('./Keycap')
 
 module.exports =
-InitiativeList = React.createClass
+ActorList = React.createClass
   getInitialState: -> {showHelp: false}
   componentDidMount: ->
     mousetrap.bind('?', () => @setState({showHelp: true}))
@@ -18,7 +18,7 @@ InitiativeList = React.createClass
       {<p>Here is your help!</p> if @state.showHelp}
       <table id="initiative-list" className="pure-table pure-table-horizontal">
         <tbody>
-          {<InitiativeEntry key={entry} ini={entry} /> for entry in [0..5]}
+          {<ActorEntry key={entry} ini={entry.ini} /> for entry in @props.actors}
         </tbody>
       </table>
     </div>

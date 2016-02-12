@@ -1,6 +1,6 @@
 React = require('react')
 
-InitiativeEntry = React.createClass
+ActorEntry = React.createClass
   getDefaultProps: ->
     {ini: 0, name: "NPC", hp: 35, ac: 18, res: "1|2|3"}
   render: ->
@@ -12,4 +12,4 @@ InitiativeEntry = React.createClass
       <td>{this.props.res}</td>
     </tr>
 
-module.exports = InitiativeEntry
+module.exports = ActorEntry
