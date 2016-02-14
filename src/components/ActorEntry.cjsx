@@ -4,7 +4,7 @@ ActorEntry = React.createClass
   getDefaultProps: ->
     {ini: 0, name: "NPC", hp: 35, ac: 18, res: "1|2|3"}
   render: ->
-    <tr>
+    <tr className={'selected' if @props.selected}>
       <td>{this.props.ini}</td>
       <td>{this.props.name}</td>
       <td>{this.props.hp}</td>

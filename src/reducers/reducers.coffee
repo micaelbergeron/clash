@@ -20,9 +20,9 @@ clashApp = (state = initialState, action) ->
       _.set(_state.actors[action.index], action.prop, action.mod)      
       _state
     when actions.ADD_ACTOR
-      _.assign({}, state, {
-        actors: _(state.actors).push(action.actor).value()
-      })
+      _state = _.cloneDeep(state);
+      _state.actors.push(action.actor)
+      _state
     else state
 
 module.exports = clashApp

@@ -7,7 +7,7 @@ mapStateToProps = (state) ->
   actors: state.actors
 
 mapDispatchToProps = (dispatch) -> {
-  onAddActorClick: (actor) ->
+  onAddActor: (actor) ->
     dispatch(A.addActor(actor))
   }
 

@@ -5,6 +5,7 @@ require('styles/App.css');
 import React from 'react';
 import DiceBox from './DiceBox';
 import ActorListView from './ActorListView'; 
+import Menu from './Menu/Menu';
 
 let yeomanImage = require('../images/yeoman.png');
 
@@ -18,6 +19,7 @@ class AppComponent extends React.Component {
             <ActorListView />
           </div>
           <div className="pure-u-1-5">
+            <Menu submenus={[]} title="Main menu" />
           </div>
         </div>
       </div>

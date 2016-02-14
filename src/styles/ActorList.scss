@@ -4,5 +4,11 @@
   font-style: monospaced;
 
   width: 100%;
-  tr { width: 100% }
+  tr {
+    width: 100%;
+
+    &.selected {
+      background: #F00;
+    }
+  }
 }
