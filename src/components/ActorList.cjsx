@@ -1,28 +1,29 @@
 require('styles/ActorList.scss')
 
 mousetrap = require('mousetrap')
-  
 React = require('react')
 ActorEntry = require('./ActorEntry')
 Keycap = require('./Keycap')
 
 module.exports =
 ActorList = React.createClass
-  getInitialState: -> {showHelp: false, selectedActor: -1}
+  displayName: 'ActorList'
+  getInitialState: -> {showHelp: false}
   componentDidMount: ->
     mousetrap.bind('?', () => @setState({showHelp: true}))
     mousetrap.bind('esc', () => @setState({showHelp: false}))
-    mousetrap.bind('+', () => @props.onAddActor({hp: 50, ini: 10, ac: 12}))
-    mousetrap.bind('j', () => @setState({selectedActor: @state.selectedActor+1}))
-    mousetrap.bind('k', () => @setState({selectedActor: @state.selectedActor-1}))
   render: ->
+    extracted = ['actors', 'selectedActor']
+    {actors, selectedActor} = _.pick(@props, extracted)
+    @props = _.omit(@props, extracted)
     <div>
-      <span>{@state.selectedActor}</span>
+      <span>{selectedActor}</span>
       <Keycap key="?" side="help"/>
       {<p>Here is your help!</p> if @state.showHelp}
       <table id="initiative-list" className="pure-table pure-table-horizontal">
         <tbody>
-          {<ActorEntry key={entry.id} ini={entry.ini} selected={i == @state.selectedActor} /> for entry,i in @props.actors}
+          {<ActorEntry {...@props} key={entry.id} ini={entry.ini} selected={entry.id == selectedActor} /> for entry in actors}
+  
         </tbody>
       </table>
     </div>

@@ -20,3 +20,10 @@ export function addActor(actor) {
     }
 }
     
+export const SELECT_ACTOR = 'SELECT_ACTOR'
+export function selectActor(actor_or_id) {
+    return {
+        type: SELECT_ACTOR,
+        actor: actor_or_id
+    }
+}

@@ -1,18 +1,20 @@
 _ = require('lodash')
 A = require('../actions/actions')
 connect = require('react-redux').connect
-ActorList = require('./ActorList')
+App = require('./App')
 
 mapStateToProps = (state) ->
   actors: state.actors
+  selectedActor: _.find(state.actors, (a) -> a.id == state.selectedActorId)
 
-mapDispatchToProps = (dispatch) -> {
+mapDispatchToProps = (dispatch) -> 
   onAddActor: (actor) ->
     dispatch(A.addActor(actor))
-  }
+  onSelectActor: (actor_or_id) ->
+    dispatch(A.selectActor(actor_or_id))
 
 module.exports =
-  ActorListView = connect(
+  AppView = connect(
     mapStateToProps,
     mapDispatchToProps
-  )(ActorList)
+  )(App)

@@ -3,6 +3,7 @@ actions = require('actions/actions')
   
 initialState =
   actors: []
+  selectedActorId: -1
   round: 0
   timer: 0
   roll: 1
@@ -20,8 +21,13 @@ clashApp = (state = initialState, action) ->
       _.set(_state.actors[action.index], action.prop, action.mod)      
       _state
     when actions.ADD_ACTOR
-      _state = _.cloneDeep(state);
+      _state = _.cloneDeep(state)
       _state.actors.push(action.actor)
+      _state
+    when actions.SELECT_ACTOR
+      _state = _.cloneDeep(state)
+      _state.selectedActorId = _.find(_state.actors,
+        (a) -> a == action.actor || a.id == action.actor).id
       _state
     else state
 
