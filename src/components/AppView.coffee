@@ -10,6 +10,8 @@ mapStateToProps = (state) ->
 mapDispatchToProps = (dispatch) -> 
   onAddActor: (actor) ->
     dispatch(A.addActor(actor))
+  onRemoveActor: (actor) ->
+    dispatch(A.removeActor(actor))
   onSelectActor: (actor_or_id) ->
     dispatch(A.selectActor(actor_or_id))
 

@@ -19,11 +19,69 @@ export function addActor(actor) {
         actor
     }
 }
+
+export const REMOVE_ACTOR = 'REMOVE_ACTOR'
+export function removeActor(actor) {
+    var actor_id = actor.id || actor 
+    return {
+        type: REMOVE_ACTOR,
+        actor_id
+    }
+}
     
+/*
+ * A selector can either be
+ *   motion: 'next', 'prev', +1, -1
+ *   relative: 'first', 'last', <index>
+ *   id: <actor id>
+ */
 export const SELECT_ACTOR = 'SELECT_ACTOR'
-export function selectActor(actor_or_id) {
+export function selectActor(selector) {
+    var parsed = false;
+    var type, arg;
+    if (!parsed && selector.hasOwnProperty('motion')) {
+        parsed = true;
+        type = 'motion';
+        switch(selector.motion) {
+          case 'next':
+            arg = 1;
+            break;
+          case 'prev':
+          case 'previous':
+            arg = -1;
+            break;
+          default:
+            args = Number(selector.motion);
+        }
+    }
+
+    if (!parsed && selector.hasOwnProperty('id')) {
+        parsed = true;
+        type = 'id';
+        arg = selector.id;        
+    }
+
+    if (!parsed && selector.hasOwnProperty('relative')) {
+        parsed = true;
+        type = 'relative';
+        switch(selector.relative) {
+        case 'first':
+        case 'head':
+            arg = 0;
+            break;
+        case 'last':
+        case 'tail':
+            arg = -1;
+            break;
+        default:
+            arg = Number(selector.relative);
+        }
+    }
+
+    if (!parsed) throw "Invalid selector, valid keys are 'motion', 'relative' or 'id'.";
+    
     return {
         type: SELECT_ACTOR,
-        actor: actor_or_id
+        motion: {type, arg}
     }
 }

@@ -19,3 +19,24 @@ body {
   border-width: 1px 0;
   background: #666;
 }
+
+.menu-page {
+  background: #333;
+
+  transition: transform 0.15s ease-out;
+  transform: translateX(0);
+  .menu-item {
+    position: relative;
+    border-bottom: 1px solid #222;
+    padding: 1em 0.33em;
+
+    .key {
+      margin-right: 0.2em;
+    }
+
+    .caption {
+      position: absolute;
+      left: 50px;
+    }
+  }
+}
