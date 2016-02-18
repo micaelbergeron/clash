@@ -1,24 +1,20 @@
 _ = require('lodash')
 actions = require('actions/actions')
-  
-initialState =
-  actors: []
-  selectedActorId: -1
-  round: 0
-  timer: 0
-  roll: 1
 
-clashApp = (state = initialState, action) ->
+has_id = (id) -> (a) -> a.id == id
+
+clashApp = (state, action) ->
   switch action.type
     when actions.CHANGE_ACTOR_PROP
-      actor = state.actors[action.index]
-      
+      actorIndex = _.findIndex(state.actors, has_id(action.actor))
+      actor = state.actors[actorIndex]
+
       # only set existing props
       state unless actor
       state unless _.has(actor, action.prop)
       
       _state = _.cloneDeep(state)
-      _.set(_state.actors[action.index], action.prop, action.mod)      
+      _.set(_state.actors[actorIndex], action.prop, action.mod)      
       _state
     when actions.ADD_ACTOR
       _state = _.cloneDeep(state)
@@ -26,11 +22,10 @@ clashApp = (state = initialState, action) ->
       _state
     when actions.REMOVE_ACTOR
       _state = _.cloneDeep(state)
-      _state.actors = _.filter(_state.actors, (a) -> a.id == action.actor) 
+      _state.actors = _.filter(_state.actors, (a) -> a.id != action.actor) 
       _state
     when actions.SELECT_ACTOR
       _state = _.cloneDeep(state)
-      has_id = (id) -> (a) -> a.id == id
       actors_count = state.actors.length
       
       _selectedActorIndex = _.findIndex(state.actors, has_id(state.selectedActorId))

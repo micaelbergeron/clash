@@ -3,10 +3,10 @@
  */
 
 export const CHANGE_ACTOR_PROP = 'CHANGE_ACTOR_PROP'
-export function changeActorProp(index, prop, mod) {
+export function changeActorProp(actor, prop, mod) {
     return {
         type: CHANGE_ACTOR_PROP,
-        index,
+        actor,
         prop,
         mod
     }
@@ -22,10 +22,10 @@ export function addActor(actor) {
 
 export const REMOVE_ACTOR = 'REMOVE_ACTOR'
 export function removeActor(actor) {
-    var actor_id = actor.id || actor 
+    var actor = actor.id || actor 
     return {
         type: REMOVE_ACTOR,
-        actor_id
+        actor
     }
 }
     

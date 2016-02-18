@@ -6,7 +6,7 @@ mousetrap = require('mousetrap')
 React = require('react')
 DiceBox = require('./DiceBox')
 ActorList = require('./ActorList')
-MainMenu = require('./Menu/Menu').MainMenu
+Menu = require('./Menu/MenuView')
 
 module.exports =
 App = React.createClass
@@ -30,7 +30,7 @@ App = React.createClass
           <ActorList {...this.props} selectedActor={selectedActor} />
         </div>
         <div className="pure-u-1-5">
-          <MainMenu />
+          <Menu />
         </div>
       </div>
     </div>
