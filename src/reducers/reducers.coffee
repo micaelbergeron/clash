@@ -18,6 +18,8 @@ clashApp = (state, action) ->
       _state
     when actions.ADD_ACTOR
       _state = _.cloneDeep(state)
+      # assign id
+      action.actor.id = _state.actors.length+1
       _state.actors.push(action.actor)
       _state
     when actions.REMOVE_ACTOR

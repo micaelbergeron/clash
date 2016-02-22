@@ -3,79 +3,115 @@ React = require('react')
 Keycap = require('../Keycap')
 mousetrap = require('mousetrap')
 A = require('../../actions/actions.js')
+  
+# HigherOrder component to "pagify" a component
+Page = (pager, Component) ->
+  React.createClass
+    displayName: "Page"
+    onHandleAction: (action) ->
+      action.action.call(@_component, pager)
+  
+    render: ->
+      <div className="menu-page">
+        <p className="menu-title"></p>
+        <Component ref={(c) => @_component = c} {...@props} onHandleAction={@onHandleAction} />
+      </div>
 
-MenuPage = React.createClass
+
+ActionList = React.createClass
   getDefaultProps: ->
     onHandleAction: _.noop
+    actions: []
   
-  getInitialState: ->
-    {menuStack: []}
-
   itemClass: (item) ->
     'menu-item'
+
+  handleActionFor: (action) ->
+    @props.onHandleAction.bind(this, action)
   
-  getMenuItems: ->
-    return @props.items unless @state.menuStack.length > 0
-    stack = _.chain(@state.menuStack)
-      .map((s) -> s + '.items')
-      .join('.')
-      .value()
-    console.log('current menu stack: ' + stack)
-    _.get(@props.items, stack)
-
-  onReturn: ->
-    @setState {menuStack: _.initial(@state.menuStack)}
-
-  onHandleClick: (key, item) ->
-    # either we trigger the callback, or enter a submenu
-    return @props.onHandleAction(key, item) if item.action
-    @setState {menuStack: @state.menuStack.concat(key)}
+  getActions: ->
+    @props.actions
 
   render: ->
-    <div className="menu-page">
-      <p className="menu-title">{@props.title}</p>
-      <div rel="menu">
-        {<div key={k} className={@itemClass(k)} onClick={@onHandleClick.bind(this, k, item)}>
-          <Keycap hotkey={item.hotkey} />
-          <span className="caption">{item.title}</span>
-        </div> for k, item of @getMenuItems()}
-      </div>
+    <div rel="action-list">
+      {<div key={k} className={@itemClass(k)} actor={@props.target} onClick={@handleActionFor(action)}>
+        <Keycap hotkey={action.hotkey} onPress={@handleActionFor(action)} />
+        <span className="caption">{action.title}</span>
+      </div> for k, action of @getActions()}
     </div>
 
-Menu = React.createClass
-  
-  getDefaultProps: -> 
+
+MainActions = React.createClass
+  getDefaultProps: ->
     title: "Main menu"
-    target: -1
-    items: {
-      add_actors: {hotkey: "+", title: "Add a new actor"}
-      remove_actor: {hotkey: "del", title: "Remove an actor"}
-      change_actor: {
+    actions:
+      add_actors:
+        hotkey: "+"
+        title: "Add a new actor"
+        action: () -> @props.dispatch(A.addActor({hp: 50, ini: 10, ac: 12}))
+      remove_actor:
+        hotkey: "del"
+        title: "Remove an actor"
+        action: () -> @props.dispatch(A.removeActor(@props.actor))
+      change_actor:
         hotkey: "c"
-        title: "Change actor status"
-        items: {
-          hp: {
-            hotkey: 'h'
-            title: 'HP'
-            action: true
-          }
-          ac: {
-            hotkey: 'a'
-            title: 'AC'
-            action: true
-          }
-        }
-      }
-    }
-
-  onHandleAction: (key,item) ->
-    @props.onChangeActorProp(@props.target, 'hp', 100)
-
-  componentDidMount: ->
-    mousetrap.bind('esc', @_menu.onReturn)
+        title: "Change current actor"
+        action: (pager) -> pager.goto ChangeActions
 
   render: ->
-    <MenuPage ref={(m) => @_menu = m} {...@props} onHandleAction={@onHandleAction} />
+    <ActionList {...@props} />
+
+ChangeActions = React.createClass
+  getDefaultProps: ->
+    actions:
+      hp:
+        hotkey: 'h'
+        title: 'Hit points'
+        action: (pager) ->
+          @onChange('hp', 10)
+          pager.back()
+      ac:
+        hotkey: 'a'
+        title: 'Armor class'
+        action: (pager) -> 
+          @onChange('ac', 5)
+          pager.back()
+
+  onChange: (prop, mod) ->
+    @props.dispatch(A.changeActorProp(@props.actor, prop, mod))
+    @props.gotoHome
+
+  render: ->
+    <ActionList {...@props} />
+
+  
+# A menu page holder
+Menu = React.createClass
+  getInitialState: ->
+    componentTree: [MainActions]
+      
+  asPager: ->
+    goto: @navigateTo
+    gotoHome: () => @setState {componentTree: [MainActions]}
+    back: @navigateBack
+    dispatch: @props.dispatch
+
+  navigateBack: ->
+    return unless @state.componentTree.length > 1
+    @setState {componentTree: _.initial(@state.componentTree)}
     
+  navigateTo: (component) ->
+    @setState {componentTree: _(@state.componentTree).push(component).value()}
+
+  componentDidMount: ->
+    mousetrap.bind('esc', @onReturn)
+
+  getCurrentPage: ->
+    PagedComponent = Page(@asPager(), _.last(@state.componentTree))
+    React.createElement(PagedComponent, @props)
+
+  render: ->
+    @getCurrentPage()
+
 module.exports =
   Menu: Menu

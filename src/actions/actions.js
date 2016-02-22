@@ -4,6 +4,7 @@
 
 export const CHANGE_ACTOR_PROP = 'CHANGE_ACTOR_PROP'
 export function changeActorProp(actor, prop, mod) {
+    actor = actor.id || actor
     return {
         type: CHANGE_ACTOR_PROP,
         actor,

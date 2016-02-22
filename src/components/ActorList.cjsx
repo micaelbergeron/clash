@@ -22,7 +22,7 @@ ActorList = React.createClass
       {<p>Here is your help!</p> if @state.showHelp}
       <table id="initiative-list" className="pure-table pure-table-horizontal">
         <tbody>
-          {<ActorEntry {...@props} key={entry.id} ini={entry.ini} selected={entry.id == selectedActor} /> for entry in actors}
+          {<ActorEntry {...entry} key={entry.id} selected={entry.id == selectedActor} /> for entry in actors}
   
         </tbody>
       </table>

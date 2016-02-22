@@ -16,11 +16,7 @@ App = React.createClass
     mousetrap.bind('k', () => @props.onSelectActor({motion: 'prev'}))
     mousetrap.bind('g g', () => @props.onSelectActor({relative: 'first'}))
     mousetrap.bind('G', () => @props.onSelectActor({relative: 'last'}))
-    mousetrap.bind('+', () => @props.onAddActor({id: @props.actors.length+1, hp: 50, ini: 10, ac: 12}))
-    mousetrap.bind('del', () =>
-      @props.onRemoveActor({ id: @props.selectedActor.id })
-      @props.onSelectActor({ motion: 'next' })
-      )
+
   render: ->
     selectedActor = @props.selectedActor?.id or -1
     <div>
