@@ -33,7 +33,7 @@ module.exports = {
     noInfo: false
   },
   resolve: {
-    extensions: ['', '.js', '.jsx', '.cjsx', '.coffee'],
+    extensions: ['', '.js', '.jsx', '.cjsx', '.coffee', 'pegjs'],
     alias: {
       actions: `${defaultSettings.srcPath}/actions/`,
       components: `${defaultSettings.srcPath}/components/`,

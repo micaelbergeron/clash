@@ -1,5 +1,6 @@
 _ = require('lodash')
 actions = require('actions/actions')
+parser = require('./dice.pegjs')
 
 has_id = (id) -> (a) -> a.id == id
 

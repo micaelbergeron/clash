@@ -8,7 +8,7 @@ Keycap = React.createClass
   componentDidMount: ->
     M.bind(@props.hotkey, @props.onPress) if @props.hotkey
 
-  componentDidUnmount: ->
+  componentWillUnmount: ->
     M.unbind(@props.hotkey) if @props.hotkey
 
   render: ->

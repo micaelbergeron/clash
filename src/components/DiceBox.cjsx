@@ -1,11 +1,13 @@
 React = require('react')
+dice = require('../reducers/dice.pegjs').parse
 
+console.log dice
 DiceBoxComponent = React.createClass  
-  roll: (min, max) -> Math.random() * (max - min) + min
+  roll: dice
 
-  getInitialState: -> {roll: this.roll(1,20)}
+  getInitialState: -> {roll: @roll('d20')}
   handleClick: (e) ->
-    this.setState({roll: this.roll(1,20)})
+    this.setState({roll: @roll('d20')})
 
   render: ->
     console.log(this)

@@ -52,7 +52,8 @@ function getDefaultModules() {
         test: /\.cjsx$/,
         loaders: ["coffee", "cjsx"]
       },
-      { test: /\.coffee$/, loader: 'coffee' }
+      { test: /\.coffee$/, loader: 'coffee' },
+      { test: /\.pegjs$/, loader: 'pegjs-loader' }
     ]
   };
 }

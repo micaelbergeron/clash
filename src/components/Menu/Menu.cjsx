@@ -1,8 +1,10 @@
 _ = require('lodash')
 React = require('react')
+ReactCSSTransitionGroup = require('react-addons-css-transition-group')
 Keycap = require('../Keycap')
 mousetrap = require('mousetrap')
 A = require('../../actions/actions.js')
+      
   
 # HigherOrder component to "pagify" a component
 Page = (pager, Component) ->
@@ -33,11 +35,14 @@ ActionList = React.createClass
     @props.actions
 
   render: ->
-    <div rel="action-list">
-      {<div key={k} className={@itemClass(k)} actor={@props.target} onClick={@handleActionFor(action)}>
+    items = for k, action of @getActions()
+      <div key={k} actor={@props.target} onClick={@handleActionFor(action)}>
         <Keycap hotkey={action.hotkey} onPress={@handleActionFor(action)} />
         <span className="caption">{action.title}</span>
-      </div> for k, action of @getActions()}
+      </div> 
+
+    <div rel="action-list">
+      {items}
     </div>
 
 
@@ -104,14 +109,16 @@ Menu = React.createClass
     @setState {componentTree: _(@state.componentTree).push(component).value()}
 
   componentDidMount: ->
-    mousetrap.bind('esc', @onReturn)
+    mousetrap.bind('esc', @navigateBack)
 
   getCurrentPage: ->
     PagedComponent = Page(@asPager(), _.last(@state.componentTree))
-    React.createElement(PagedComponent, @props)
-
+    React.createElement(PagedComponent, _.merge(@props, {key: 1}))
+  
   render: ->
-    @getCurrentPage()
+    <ReactCSSTransitionGroup transitionName="menu-page" transitionAppear={true} transitionEnterTimeout={200} transitionLeaveTimeout={200}>
+      {@getCurrentPage()}
+    </ReactCSSTransitionGroup>
 
 module.exports =
   Menu: Menu
