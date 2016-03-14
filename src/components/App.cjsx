@@ -20,9 +20,9 @@ App = React.createClass
   render: ->
     selectedActor = @props.selectedActor?.id or -1
     <div>
-      <div><DiceBox /></div>
       <div className="pure-g">
         <div className="pure-u-4-5">
+          <DiceBox />
           <ActorList {...this.props} selectedActor={selectedActor} />
         </div>
         <div className="pure-u-1-5">

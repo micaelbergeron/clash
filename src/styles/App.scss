@@ -23,8 +23,13 @@ body {
 .menu-page {
   background: #333;
 
-  transition: transform 0.15s ease-out;
-  transform: translateX(0);
+  .menu-title {
+    text-align: center;
+    margin: 0;
+    padding: 0.33em;
+    border-bottom: 2px solid #666666;
+  } 	    
+
   .menu-item {
     position: relative;
     border-bottom: 1px solid #222;
@@ -40,3 +45,27 @@ body {
     }
   }
 }
+
+.menu-page-enter {
+  transition: transform 0.5s ease-in;
+  transform: translatex(100%);
+
+  &.menu-page-enter-active {
+    transform: translatex(0%);
+  }
+}
+
+.menu-page-leave {
+  position: absolute;
+  top: 0px;
+  z-index: -1;
+
+  transition: opacity 0.5s ease;
+  opacity: 1;
+
+  &.menu-page-leave-active {
+    opacity: 0.3; 
+  }
+}
+  
+

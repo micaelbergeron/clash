@@ -37,3 +37,4 @@ function buildConfig(wantedEnv) {
 }
 
 module.exports = buildConfig(env);
+console.log(module.exports);

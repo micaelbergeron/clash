@@ -2,6 +2,7 @@ require('styles/ActorList.scss')
 
 mousetrap = require('mousetrap')
 React = require('react')
+ReactCSSTransitionGroup = require('react-addons-css-transition-group')
 ActorEntry = require('./ActorEntry')
 Keycap = require('./Keycap')
 
@@ -21,9 +22,6 @@ ActorList = React.createClass
       <Keycap key="?" side="help"/>
       {<p>Here is your help!</p> if @state.showHelp}
       <table id="initiative-list" className="pure-table pure-table-horizontal">
-        <tbody>
-          {<ActorEntry {...entry} key={entry.id} selected={entry.id == selectedActor} /> for entry in actors}
-  
-        </tbody>
+        {<ActorEntry {...entry} key={entry.id} selected={entry.id == selectedActor} /> for entry in actors}
       </table>
     </div>

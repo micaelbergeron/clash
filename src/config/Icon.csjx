@@ -1,0 +1,11 @@
+icons = require('svg-sprite!../images/icons')
+React = require('react')
+
+console.log icons
+
+module.exports =
+  Icon = React.createClass
+    render: ->
+      <svg className={@props.className} width={@props.width} height={@props.height}>
+        <use xlinkHref={@props.glyph} />
+      </svg>

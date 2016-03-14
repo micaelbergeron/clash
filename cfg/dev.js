@@ -7,6 +7,7 @@ let defaultSettings = require('./defaults');
 
 // Add needed plugins here
 let BowerWebpackPlugin = require('bower-webpack-plugin');
+let SvgStore = require('webpack-svgstore-plugin');
 
 let config = Object.assign({}, baseConfig, {
   entry: [
@@ -21,7 +22,12 @@ let config = Object.assign({}, baseConfig, {
     new webpack.NoErrorsPlugin(),
     new BowerWebpackPlugin({
       searchResolveModulesDirectories: false
-    })
+    }),
+    new SvgStore(
+      path.join('./src', 'images', 'icons'),
+      path.join('.'),
+      {name: '[hash].sprite.svg'}
+    )       
   ],
   module: defaultSettings.getDefaultModules()
 });

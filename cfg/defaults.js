@@ -53,7 +53,11 @@ function getDefaultModules() {
         loaders: ["coffee", "cjsx"]
       },
       { test: /\.coffee$/, loader: 'coffee' },
-      { test: /\.pegjs$/, loader: 'pegjs-loader' }
+      { test: /\.pegjs$/, loader: 'pegjs-loader' },
+      { test: /\.svg$/, loader: 'svg-sprite?' + JSON.stringify({name: '[name]_[hash]'}) } 
+    ],
+    plugins: [
+      
     ]
   };
 }

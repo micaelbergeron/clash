@@ -4,8 +4,8 @@ ReactCSSTransitionGroup = require('react-addons-css-transition-group')
 Keycap = require('../Keycap')
 mousetrap = require('mousetrap')
 A = require('../../actions/actions.js')
-      
-  
+
+
 # HigherOrder component to "pagify" a component
 Page = (pager, Component) ->
   React.createClass
@@ -14,10 +14,7 @@ Page = (pager, Component) ->
       action.action.call(@_component, pager)
   
     render: ->
-      <div className="menu-page">
-        <p className="menu-title"></p>
-        <Component ref={(c) => @_component = c} {...@props} onHandleAction={@onHandleAction} />
-      </div>
+      <Component ref={(c) => @_component = c} {...@props} onHandleAction={@onHandleAction} />
 
 
 ActionList = React.createClass
@@ -41,8 +38,11 @@ ActionList = React.createClass
         <span className="caption">{action.title}</span>
       </div> 
 
-    <div rel="action-list">
-      {items}
+    <div>
+      <p className="menu-title">{@props.title}</p>
+      <div rel="action-list">
+        {items}
+      </div>
     </div>
 
 
@@ -65,9 +65,11 @@ MainActions = React.createClass
 
   render: ->
     <ActionList {...@props} />
+MainActions.key = "main"
 
 ChangeActions = React.createClass
   getDefaultProps: ->
+    title: "Change actor"
     actions:
       hp:
         hotkey: 'h'
@@ -88,10 +90,11 @@ ChangeActions = React.createClass
 
   render: ->
     <ActionList {...@props} />
-
+ChangeActions.key = "change-actor-prop"
   
 # A menu page holder
 Menu = React.createClass
+  displayName: "Menu"
   getInitialState: ->
     componentTree: [MainActions]
       
@@ -112,12 +115,18 @@ Menu = React.createClass
     mousetrap.bind('esc', @navigateBack)
 
   getCurrentPage: ->
-    PagedComponent = Page(@asPager(), _.last(@state.componentTree))
-    React.createElement(PagedComponent, _.merge(@props, {key: 1}))
-  
+    @pagify _.last(@state.componentTree)
+
+  pagify: (component) ->
+    PagedComponent = Page(@asPager(), component)
+    pageProps = page = React.createElement(PagedComponent, _.merge({key: component.key}, @props))
+    
   render: ->
-    <ReactCSSTransitionGroup transitionName="menu-page" transitionAppear={true} transitionEnterTimeout={200} transitionLeaveTimeout={200}>
-      {@getCurrentPage()}
+    <ReactCSSTransitionGroup component="div" className="menu-page"
+                          transitionName="menu-page"
+                          transitionEnterTimeout=500
+                          transitionLeaveTimeout=500>
+      {@pagify component for component in @state.componentTree}
     </ReactCSSTransitionGroup>
 
 module.exports =
