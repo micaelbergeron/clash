@@ -18,9 +18,6 @@ ActorList = React.createClass
     {actors, selectedActor} = _.pick(@props, extracted)
     @props = _.omit(@props, extracted)
     <div>
-      <span>{selectedActor}</span>
-      <Keycap key="?" side="help"/>
-      {<p>Here is your help!</p> if @state.showHelp}
       <table id="initiative-list" className="pure-table pure-table-horizontal">
         {<ActorEntry {...entry} key={entry.id} selected={entry.id == selectedActor} /> for entry in actors}
       </table>

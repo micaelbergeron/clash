@@ -22,7 +22,7 @@ App = React.createClass
     <div>
       <div className="pure-g">
         <div className="pure-u-4-5">
-          <DiceBox />
+          <h1 className="app-name">Clash</h1> 
           <ActorList {...this.props} selectedActor={selectedActor} />
         </div>
         <div className="pure-u-1-5">
