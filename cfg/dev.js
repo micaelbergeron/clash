@@ -7,7 +7,7 @@ let defaultSettings = require('./defaults');
 
 // Add needed plugins here
 let BowerWebpackPlugin = require('bower-webpack-plugin');
-let SvgStore = require('webpack-svgstore-plugin');
+// let SvgStoe = require('webpack-svgstore-plugin');
 
 let config = Object.assign({}, baseConfig, {
   entry: [
@@ -16,18 +16,13 @@ let config = Object.assign({}, baseConfig, {
     './src/index'
   ],
   cache: true,
-  devtool: 'eval-source-map',
+  devtool: 'inline-source-map',
   plugins: [
     new webpack.HotModuleReplacementPlugin(),
     new webpack.NoErrorsPlugin(),
     new BowerWebpackPlugin({
       searchResolveModulesDirectories: false
     }),
-    new SvgStore(
-      path.join('./src', 'images', 'icons'),
-      path.join('.'),
-      {name: '[hash].sprite.svg'}
-    )       
   ],
   module: defaultSettings.getDefaultModules()
 });
@@ -35,11 +30,14 @@ let config = Object.assign({}, baseConfig, {
 // Add needed loaders to the defaults here
 config.module.loaders.push({
   test: /\.(js|jsx)$/,
-  loader: 'react-hot!babel-loader',
+  loader: 'babel-loader',
   include: [].concat(
     config.additionalPaths,
     [ path.join(__dirname, '/../src') ]
-  )
+  ),
+  query: {
+    presets:[ 'es2015', 'react', 'stage-2' ]
+  }
 });
 
 module.exports = config;

@@ -2,20 +2,10 @@
 let path = require('path');
 let defaultSettings = require('./defaults');
 
-// Additional npm or bower modules to include in builds
-// Add all foreign plugins you may need into this array
-// @example:
-function npm_import(module_name) {
-    return path.join(__dirname, '../node_modules', module_name);
-}
-
 // let additionalPaths = [ path.join(npmBase, 'react-bootstrap') ];
-let additionalPaths = [
-    npm_import('purecss'),
-];
 
 module.exports = {
-  additionalPaths: additionalPaths,
+  additionalPaths: [],
   port: defaultSettings.port,
   debug: true,
   devtool: 'eval',

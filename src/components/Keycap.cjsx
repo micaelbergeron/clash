@@ -1,4 +1,4 @@
-require('styles/Keycap.scss')
+# require('styles/Keycap.scss')
 M = require('mousetrap')
 
 React = require('react')
@@ -13,6 +13,4 @@ Keycap = React.createClass
     M.unbind(@props.hotkey) if @props.hotkey
 
   render: ->
-    <div className="key">
-      <kdb>{@props.hotkey}</kdb>
-    </div>
+    <kdb>{@props.hotkey}</kdb>

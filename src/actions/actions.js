@@ -2,7 +2,11 @@
  * action types
  */
 
-export const CHANGE_ACTOR_PROP = 'CHANGE_ACTOR_PROP'
+export const CHANGE_ACTOR_PROP = 'CHANGE_ACTOR_PROP';
+export const ADD_ACTOR = 'ADD_ACTOR';
+export const REMOVE_ACTOR = 'REMOVE_ACTOR';
+export const SELECT_ACTOR = 'SELECT_ACTOR';
+
 export function changeActorProp(actor, prop, mod) {
     actor = actor.id || actor
     return {
@@ -13,15 +17,13 @@ export function changeActorProp(actor, prop, mod) {
     }
 }
 
-export const ADD_ACTOR = 'ADD_ACTOR'
 export function addActor(actor) {
     return {
         type: ADD_ACTOR,
-        actor
+	actor
     }
 }
 
-export const REMOVE_ACTOR = 'REMOVE_ACTOR'
 export function removeActor(actor) {
     var actor = actor.id || actor 
     return {
@@ -29,14 +31,13 @@ export function removeActor(actor) {
         actor
     }
 }
-    
+
 /*
  * A selector can either be
  *   motion: 'next', 'prev', +1, -1
  *   relative: 'first', 'last', <index>
  *   id: <actor id>
  */
-export const SELECT_ACTOR = 'SELECT_ACTOR'
 export function selectActor(selector) {
     var parsed = false;
     var type, arg;

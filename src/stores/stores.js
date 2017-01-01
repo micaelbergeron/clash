@@ -9,10 +9,13 @@ let initialState = {
     roll: 1,
 }
 
+// the main store
 let store = createStore(clashApp,
                         initialState,
                         window.devToolsExtension ? window.devToolsExtension() : undefined)
+
+// let just inspect the store mutations
 let unsubscribe = store.subscribe(() => console.log(store.getState()))
 
 console.log(store.getState());
-export default store
+export default store;

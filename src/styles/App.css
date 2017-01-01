@@ -1,12 +1,43 @@
 /* Base Application Styles */
+@import './theme-default.css';
+
+:root {
+  --modeline-height: 3em;
+}
+
+/*
+When setting the primary font stack, apply it to the Pure grid units along
+with `html`, `button`, `input`, `select`, and `textarea`. Pure Grids use
+specific font stacks to ensure the greatest OS/browser compatibility.
+*/
+html, button, input, select, textarea,
+.pure-g [class *= "pure-u"] {
+  font-family: "Slim Joe", Roboto, sans;
+  font-weigth: 400;
+}
+
+html, body {
+  min-height: 100vh;
+}
+
+main {
+  & .app {
+    height: calc(100vh - var(--modeline-height));
+  }
+  & .modeline {
+    height: var(--modeline-height);
+  }
+}
+
 body {
   color: #ccc;
   background: #222;
 }
 
 .app-name {
-  padding: .33em .66em;
   margin: 0;
+  padding: .33em .66em;
+  font-family: "Big John", sans;
   background: #444444;
 }
 
@@ -29,23 +60,23 @@ body {
 .menu-page {
   background: #333;
 
-  .menu-title {
+  & .menu-title {
     text-align: center;
     margin: 0;
     padding: 0.33em;
     border-bottom: 2px solid #666666;
   } 	    
 
-  .menu-item {
+  & .menu-item {
     position: relative;
     border-bottom: 1px solid #222;
     padding: 1em 0.33em;
 
-    .key {
+    & .key {
       margin-right: 0.2em;
     }
 
-    .caption {
+    & .caption {
       position: absolute;
       left: 50px;
     }
@@ -73,5 +104,8 @@ body {
     opacity: 0.3; 
   }
 }
-  
+
+.modeline {
+  background: var(--modeline-surface);
+}
 

@@ -3,13 +3,12 @@ import React from 'react';
 import { render } from 'react-dom';
 import { Provider } from 'react-redux'
 import clashStore from './stores/stores'
-
-import App from './components/AppView';
-console.log(clashStore)
+import AppView from './components/AppView';
 
 // Render the main component into the dom
-render(<Provider store={clashStore}>
-         <App />
-       </Provider>,
-       document.getElementById('app')
-)
+render(
+  <Provider store={clashStore}>
+    <AppView />
+  </Provider>,
+  document.getElementById('app')
+);

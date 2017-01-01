@@ -1,0 +1,33 @@
+:root {
+    --rowBg: #333333;
+    --rowBg-hover: lighten($row-bg, 5%);
+    --player-base: #4455BB;
+    --ennemy-base: #cc4433;
+    --allied-base: #449933;
+}
+  
+#initiative-list {
+  width: 100%;
+  color: whitesmoke;
+  font-style: sans;
+  line-height: 2em;
+  border-spacing: 0 0.3em;
+  border: none;
+
+  & li {
+    transition: border-left 0.1s ease;
+    border-left: 0.15em solid var(--player-base);
+    background: var(--rowBg);
+
+    &.ennemy {
+      border-left-color: var(--ennemy-base);
+    }
+    &.allied {
+      border-left-color: var(--allied-base);
+    }
+    &.selected {
+      border-left-width: 0.6em;
+      background: lighten(var(--rowBg), 3%);
+    }
+  }
+}
