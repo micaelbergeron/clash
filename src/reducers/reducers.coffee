@@ -19,8 +19,6 @@ clashApp = (state, action) ->
       _state
     when actions.ADD_ACTOR
       _state = _.cloneDeep(state)
-      # assign id
-      action.actor.id = _state.actors.length+1
       _state.actors.push(action.actor)
       _state
     when actions.REMOVE_ACTOR
@@ -30,8 +28,9 @@ clashApp = (state, action) ->
     when actions.SELECT_ACTOR
       _state = _.cloneDeep(state)
       actors_count = state.actors.length
+      return -1 if actors_count == 0
       
-      _selectedActorIndex = _.findIndex(state.actors, has_id(state.selectedActorId))
+      _selectedActorIndex = state.selectedActorIndex
       next_idx = switch(action.motion.type)
         when 'motion'
           _selectedActorIndex + action.motion.arg
@@ -45,7 +44,11 @@ clashApp = (state, action) ->
       next_idx = if next_idx < 0 then actors_count - 1
       else next_idx % actors_count
       
-      _state.selectedActorId = _state.actors[next_idx]?.id or -1
+      _state.selectedActorIndex = next_idx
+      _state
+    when actions.SET_MULTIPLEX
+      _state = _.cloneDeep(state)
+      _state.multiplex = Math.max(action.factor, 0)
       _state
     else state
 

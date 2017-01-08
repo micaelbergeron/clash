@@ -1,12 +1,15 @@
 import React from 'react';
-import { withReflex } from 'reflexbox';
+import { withReflex, Flex, Box } from 'reflexbox';
 
 class ModeLine extends React.Component {
   render() {
     return (
-      <div className="modeline">{this.props.mode}</div>
+      <Flex className="modeline" p="2" justify="space-between">
+        <Box>{this.props.mode}</Box>
+        <Box>{this.props.multiplex}</Box>
+      </Flex>
     )
   }
 }
 
-export default withReflex()(ModeLine);
+export default ModeLine;

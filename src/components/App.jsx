@@ -4,34 +4,54 @@ import styles from 'styles/App.css';
 import { Box } from 'reflexbox';
 
 import mousetrap from 'mousetrap';
+import { HotKeys } from 'react-hotkeys';
 import React from 'react';
+import R from 'ramda';
+import ReactDOM from 'react-dom';
 
-import DiceBox from './DiceBox';
 import ActorList from './ActorList';
 import Menu from './Menu/MenuView';
 import ModeLine from './ModeLine';
 
+import { setMultiplex } from 'actions/actions.js';
+
+const map = {
+  'select_down': 'j',
+  'select_up': 'k',
+  'select_first': 'g g',
+  'select_last': 'G',
+  'cancel': ['esc', 'ctrl+g'],
+  'multiplex': R.range(0,10).map(String),
+}
+
 class App extends React.Component {
-  componentDidMount() {
-    mousetrap.bind('j', () => this.props.onSelectActor({motion: 'next'}));
-    mousetrap.bind('k', () => this.props.onSelectActor({motion: 'prev'}));
-    mousetrap.bind('g g', () => this.props.onSelectActor({relative: 'first'}));
-    mousetrap.bind('G', () => this.props.onSelectActor({relative: 'last'}));
-  }
-  
   render() {
+    const handlers = {
+      'select_down': () => this.props.onSelectActor({motion: 'next'}),
+      'select_up': () => this.props.onSelectActor({motion: 'prev'}),
+      'select_first': () => this.props.onSelectActor({relative: 'first'}),
+      'select_last': () => this.props.onSelectActor({relative: 'last'}),
+      'cancel': (event) => {
+        event.stopPropagation();
+        console.log('CANCEL')
+        this.props.onSetMultiplex(0)
+      },
+      'multiplex': (event) => {
+        console.info(event)
+        let factor = 10*this.props.multiplexFactor + (event.keyCode - 48)
+        this.props.onSetMultiplex(factor)
+      },
+    }
+    
     return (
       <main>
-        <div className="app pure-g">
-          <div className="pure-u-4-5">
-            <h1 className="app-name">Clash</h1> 
-            <ActorList {...this.props} />
-          </div>
-          <div className="pure-u-1-5">
-            <Menu />
-          </div>
-        </div>
-        <ModeLine mode={'default'} />
+        <HotKeys keyMap={map} handlers={handlers} className="app">
+          <h1 className="app-name">Clash</h1> 
+          <Menu>
+            <ActorList />
+          </Menu>
+        </HotKeys>
+        <ModeLine multiplex={this.props.multiplexFactor} mode={'default'} />
       </main>
     );
   }

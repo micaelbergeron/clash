@@ -8,15 +8,15 @@
   
 #initiative-list {
   width: 100%;
+  list-style-type: none;
   color: whitesmoke;
   font-style: sans;
-  line-height: 2em;
-  border-spacing: 0 0.3em;
-  border: none;
+  border: 0;
 
   & li {
+    position: relative;
     transition: border-left 0.1s ease;
-    border-left: 0.15em solid var(--player-base);
+    padding-left: 0.6em;
     background: var(--rowBg);
 
     &.ennemy {
@@ -26,8 +26,17 @@
       border-left-color: var(--allied-base);
     }
     &.selected {
-      border-left-width: 0.6em;
-      background: lighten(var(--rowBg), 3%);
+      background: color(color(var(--rowBg)) l(+3%));
+
+      & .entry__pin { width: 0.6em; }
+    }
+
+    & .entry__pin {
+      position: absolute;
+      left: 0;
+      width: 0.20em;
+      height: 100%;
+      transition: width 0.1s ease;
     }
   }
 }

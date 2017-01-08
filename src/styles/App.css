@@ -5,6 +5,13 @@
   --modeline-height: 3em;
 }
 
+* {
+  margin: 0;
+  padding: 0;
+}
+
+*:focus { border: 1px dashed orange !important; }
+
 /*
 When setting the primary font stack, apply it to the Pure grid units along
 with `html`, `button`, `input`, `select`, and `textarea`. Pure Grids use
@@ -59,6 +66,7 @@ body {
 
 .menu-page {
   background: #333;
+  height: 100%;
 
   & .menu-title {
     text-align: center;

@@ -1,53 +1,19 @@
 _ = require('lodash')
+R = require('ramda')
 React = require('react')
+ReactDOM = require('react-dom')
 ReactCSSTransitionGroup = require('react-addons-css-transition-group')
 Keycap = require('../Keycap')
 mousetrap = require('mousetrap')
+HotKeys = require('react-hotkeys').HotKeys
+
 A = require('../../actions/actions.js')
 ActorForm = require('../ActorForm').default
+ActionList = require('./ActionList').default
 connect = require('react-redux').connect
-Actor = require('../../models/Actor').default
-
-
-# HigherOrder component to "pagify" a component
-Page = (pager, Component) ->
-  React.createClass
-    displayName: "Page"
-    onHandleAction: (action) ->
-      action.call(@_component, pager)
-  
-    render: ->
-      <Component ref={(c) => @_component = c} {...@props} pager={pager} onHandleAction={@onHandleAction} />
-
-
-ActionList = React.createClass
-  getDefaultProps: ->
-    onHandleAction: _.noop
-    actions: []
-  
-  itemClass: (item) ->
-    'menu-item'
-
-  getActions: ->
-    @props.actions
-
-  render: ->
-    onHandleAction = @props.onHandleAction
-    target = @props.target
-    items = for k, action of @getActions()
-      do (k, action) ->
-        <div className="menu-item" key={k} onClick={() => onHandleAction(action.action)}>
-          <Keycap hotkey={action.hotkey} onPress={() => onHandleAction(action.action)} />
-          <span className="caption">{action.title}</span>
-        </div> 
-
-    <div>
-      <p className="menu-title">{@props.title}</p>
-      <div rel="action-list">
-        {items}
-      </div>
-    </div>
-
+playerFactory = require('../../models/Factories').Player.createFactory()
+Box = require('reflexbox').Box;
+Flex = require('reflexbox').Flex;
 
 MainActions = React.createClass
   getDefaultProps: ->
@@ -56,15 +22,26 @@ MainActions = React.createClass
       add_actors:
         hotkey: "+"
         title: "Add a new actor"
-        action: (pager) -> pager.goto CreateActor
+        action: (event) ->
+         @props.pager.goto CreateActor
+         event.preventDefault()
       remove_actor:
         hotkey: "del"
         title: "Remove an actor"
-        action: () -> @props.dispatch(A.removeActor(@props.actor)) # should it know the current actor?
+        action: () ->
+          @props.dispatch(A.removeActor(@props.actor)) # should it know the current actor?
+          @props.dispatch(A.selectActor({ motion: 0 }))
       change_actor:
         hotkey: "c"
         title: "Change current actor"
-        action: (pager) -> pager.goto ChangeActions
+        action: () -> @props.pager.goto ChangeActions
+      copy_actor:
+        hotkey: "y"
+        title: "Copy current actor"
+        action: () ->
+          actor_clone = @props.actor.clone()
+          actor_clone.reroll()
+          @props.dispatch(A.addActor(actor_clone)) # that easy?
 
   render: ->
     <ActionList {...@props} />
@@ -83,37 +60,37 @@ ChangeActions = React.createClass
       ac:
         hotkey: 'a'
         title: 'Armor class'
-        action: () -> 
+        action: () ->
           @onChange('ac', 5)
           @props.pager.back()
 
   onChange: (prop, mod) ->
     @props.dispatch(A.changeActorProp(@props.actor, prop, mod))
-    @props.gotoHome
+    @props.home()
 
   render: ->
     <ActionList {...@props} />
 ChangeActions.key = "change-actor-prop"
 
 CreateActor = React.createClass
-  getDefaultProps: =>
+  getDefaultProps: ->
     title: 'New actor'
     actions:
       create:
-        hotkey: 'k'
+        hotkey: ['enter', 'ctrl+k']
         title: 'Create'
         action: () ->
-          @props.dispatch(A.addActor(@state.actor))
-          @props.pager.gotoHome()
+          @props.dispatch(A.addActor(@props.actor))
+          @props.dispatch(A.selectActor(@props.actor))
+          @props.pager.home()
 
   getInitialState: ->
-    actor: new Actor()
+    actor: playerFactory()
 
   render: ->
-    <div key={@props.key}>
-      <ActorForm {...@props} actor={@state.actor} onChangeActor={(actor) => this.setState({ actor: actor })} />
-      <ActionList {...@props} />
-    </div>
+    <ActionList {...@props} actor={@state.actor} >
+      <ActorForm actor={@state.actor} onChangeActor={(actor) => this.setState({ actor: actor })} />
+    </ActionList>
 CreateActor.key = "create-actor"
 
 # A menu page holder
@@ -121,36 +98,53 @@ Menu = React.createClass
   displayName: "Menu"
   getInitialState: ->
     componentTree: [MainActions]
-      
+
   asPager: ->
     goto: @navigateTo
     back: @navigateBack
-    gotoHome: () => @setState {componentTree: [MainActions]}
+    home: @navigateHome
 
+  # [M0, ..., Mn] -> [M0]
+  navigateHome: ->
+    @setState {componentTree:  [@state.componentTree.shift()]}
+
+  # [M0, ..., Mn] -> [M0, ..., Mn-1]
   navigateBack: ->
     return unless @state.componentTree.length > 1
-    @setState {componentTree: _.initial(@state.componentTree)}
-    
+    @setState {componentTree: _.initial(@state.componentTree)} 
+
+  # [M0, ..., Mn] -> [M0, ..., Mn, Mn+1]
   navigateTo: (component) ->
-    @setState {componentTree: _(@state.componentTree).push(component).value()}
+    @setState {componentTree: @state.componentTree.concat(component)} # 
 
-  componentDidMount: ->
-    mousetrap.bind('esc', @navigateBack)
+  buildPage: (component) ->
+    page_props = _.omit(@props, 'children')
+    # todo: use child context
+    React.createElement(component, _.merge({key: component.key, pager: @asPager(), menu: this}, page_props))
 
-  getCurrentPage: ->
-    @pagify _.last(@state.componentTree)
+  componentWillReceiveProps: (props) ->
+    # update the current page props so
 
-  pagify: (component) ->
-    PagedComponent = Page(@asPager(), component)
-    pageProps = page = React.createElement(PagedComponent, _.merge({key: component.key}, @props))
-    
   render: ->
-    <ReactCSSTransitionGroup component="div" className="menu-page"
-                          transitionName="menu-page"
-                          transitionEnterTimeout=500
-                          transitionLeaveTimeout=500>
-      {@pagify component for component in @state.componentTree}
-    </ReactCSSTransitionGroup>
+    currentPage = @buildPage(_.last(@state.componentTree))
+    map =
+      'cancel': ['esc', 'ctrl-g']
+    <HotKeys keyMap={map} className="menu-page">
+      <Flex>
+        <Box col={9}>
+          {@props.children}
+        </Box>
+        <Box col={3}>
+          <ReactCSSTransitionGroup component="div"
+                            transitionName="menu-page"
+                            transitionEnterTimeout=500
+                            transitionLeaveTimeout=500>
+            {currentPage}
+          </ReactCSSTransitionGroup>
+        </Box>
+      </Flex>
+    </HotKeys>
 
 module.exports =
   Menu: Menu
+
