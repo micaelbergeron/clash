@@ -1,8 +1,10 @@
 /* Base Application Styles */
 @import './theme-default.css';
 
+
 :root {
-  --modeline-height: 3em;
+  --title-height: 60px;
+  --modeline-height: 45px;
 }
 
 * {
@@ -10,16 +12,16 @@
   padding: 0;
 }
 
-*:focus { border: 1px dashed orange !important; }
+// debug
+// *:focus { border: 1px dashed orange !important; }
 
 /*
-When setting the primary font stack, apply it to the Pure grid units along
-with `html`, `button`, `input`, `select`, and `textarea`. Pure Grids use
-specific font stacks to ensure the greatest OS/browser compatibility.
-*/
-html, button, input, select, textarea,
-.pure-g [class *= "pure-u"] {
-  font-family: "Slim Joe", Roboto, sans;
+   When setting the primary font stack, apply it to the Pure grid units along
+   with `html`, `button`, `input`, `select`, and `textarea`. Pure Grids use
+   specific font stacks to ensure the greatest OS/browser compatibility.
+ */
+html, button, input, select, textarea {
+  font-family: var(--font-main);
   font-weigth: 400;
 }
 
@@ -28,24 +30,25 @@ html, body {
 }
 
 main {
+  & .app-name {
+    margin: 0;
+    line-height: var(--title-height);
+    padding-left: 0.66em;
+    font-family: "Big John", sans;
+    background: #444444;
+  }
   & .app {
-    height: calc(100vh - var(--modeline-height));
+    height: calc(100vh - var(--modeline-height) - var(--title-height));
   }
   & .modeline {
     height: var(--modeline-height);
+    font-weight: 900;
   }
 }
 
 body {
   color: #ccc;
   background: #222;
-}
-
-.app-name {
-  margin: 0;
-  padding: .33em .66em;
-  font-family: "Big John", sans;
-  background: #444444;
 }
 
 .index img {
@@ -64,18 +67,27 @@ body {
   background: #666;
 }
 
-.menu-page {
+.menu__page {
   background: #333;
   height: 100%;
 
-  & .menu-title {
+  & .menu__title {
     text-align: center;
     margin: 0;
     padding: 0.33em;
     border-bottom: 2px solid #666666;
   } 	    
 
-  & .menu-item {
+  & .menu__content {
+    overflow-y: auto;
+  }
+
+  & .menu__actions {
+    border-left: 0.3em solid #444444;
+    padding: 0.3em;
+  }
+
+  & .menu__item {
     position: relative;
     border-bottom: 1px solid #222;
     padding: 1em 0.33em;
@@ -92,7 +104,7 @@ body {
 }
 
 .menu-page-enter {
-  transition: transform 0.5s ease-in;
+  transition: transform 0.125s ease-in;
   transform: translatex(100%);
 
   &.menu-page-enter-active {
@@ -105,7 +117,7 @@ body {
   top: 0px;
   z-index: -1;
 
-  transition: opacity 0.5s ease;
+  transition: opacity 0.125s ease;
   opacity: 1;
 
   &.menu-page-leave-active {

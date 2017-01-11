@@ -1,5 +1,5 @@
 import { createStore, applyMiddleware, compose } from 'redux'
-import { enableBatching } from 'redux-batched-actions'
+import { enableBatching, batchActions } from 'redux-batched-actions'
 import R from 'ramda';
 import clashApp from '../reducers/reducers'
 import { setMultiplex } from 'actions/actions'
@@ -20,11 +20,11 @@ const multiplexMiddleware = store => next => action => {
   const multiplex = action.multiplex || R.identity
   let actions = action;
 
-  if (m > 1) {
-    actions = multiplex(action, m);
-    if (action.multiplex)
-      store.dispatch(setMultiplex(0))
-  } 
+  // do not multiplex when the factor is unit
+  if (action.multiplex && m > 1) {
+    // if the action is multiplexed, consume the current factor
+    actions = batchActions([...multiplex(action, m), setMultiplex(0)])
+  }
 
   next(actions)
 }

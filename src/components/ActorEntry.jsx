@@ -4,7 +4,7 @@ import { withReflex, Box, Flex } from 'reflexbox';
 
 
 const Attribute = (prop, name) =>
-  <Box style={{backgroundColor: 'grey'}} key={name} col={2} m={1} p={1}>{prop.value}</Box>
+  <Box style={{backgroundColor: 'grey'}} key={name} col={2} m={1} p={1}>{`${name}: ${prop.value}`}</Box>
 
 class ActorEntry extends React.Component {
   render() {

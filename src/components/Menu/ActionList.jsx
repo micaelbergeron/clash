@@ -5,6 +5,8 @@ import Keycap from 'components/Keycap';
 import R from 'ramda';
 
 
+console.info(Keycap);
+
 export default class ActionList extends React.Component {
   componentWillMount() {
     // we want the moustrap handler to be on the menu
@@ -18,7 +20,7 @@ export default class ActionList extends React.Component {
 
     let items = R.compose(R.values,
                           R.mapObjIndexed((action, k) => 
-      <div tabindex="0" className="menu-item" key={k} onClick={(e) => action.action.call(this, e)}>
+      <div tabIndex="0" className="menu__item" key={k} onClick={(e) => action.action.call(this, e)}>
         <Keycap hotkey={action.hotkey} onPress={(e) => action.action.call(this, e)} />
         <span className="caption">{action.title}</span>
       </div>
@@ -26,7 +28,7 @@ export default class ActionList extends React.Component {
 
     return (
       <HotKeys keyMap={map} handlers={handlers} focused={true} attach={this.menu} >
-        <p className="menu-title">{this.props.title}</p>
+        <p className="menu__title">{this.props.title}</p>
         {this.props.children}
         <div rel="action-list">
           {items(actions)}

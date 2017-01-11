@@ -17,6 +17,7 @@ export class Actor {
     R.mapObjIndexed((prop, name, attrs) => {
       if (prop instanceof Dice) attrs[name] = prop.roll()
     }, this.attrs);
+    return this;
   }
 
   // create another object from the same template

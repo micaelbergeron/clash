@@ -33,23 +33,19 @@ export function changeActorProp(actor, prop, mod) {
 
 export function addActor(actor) {
   return {
-    multiplex: (action, m) => batchActions(
-      //R.times(Number, 10)
-      R.times(_ => addActor(actor.clone()), m)
-    ),
+    multiplex: (action, m) =>
+      R.times(_ => addActor(actor.clone().reroll()), m),
     type: ADD_ACTOR,
     actor
   }
 }
 
-export const removeActor = actor => {
-  var actor = actor.id || actor 
+export const removeActor = () => {
   return {
-    multiplex: (action, m) => batchActions(
-      R.times(_ => removeActor(actor), m)
-    ),
+    multiplex: (action, m) =>
+      [Object.assign(action, { count: m })],
     type: REMOVE_ACTOR,
-    actor
+    count: 1
   }
 }
 

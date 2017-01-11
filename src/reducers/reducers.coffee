@@ -1,4 +1,5 @@
 _ = require('lodash')
+R = require('ramda')
 actions = require('actions/actions')
 parser = require('./dice.pegjs')
 
@@ -23,7 +24,7 @@ clashApp = (state, action) ->
       _state
     when actions.REMOVE_ACTOR
       _state = _.cloneDeep(state)
-      _state.actors = _.filter(_state.actors, (a) -> a.id != action.actor) 
+      _state.actors = R.remove(state.selectActorIndex, action.count, _state.actors) 
       _state
     when actions.SELECT_ACTOR
       _state = _.cloneDeep(state)

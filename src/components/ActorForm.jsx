@@ -43,9 +43,7 @@ class ActorForm extends React.Component {
       <PropertyInput inputRef={i == 0 ? (f) => this.firstField = f:null} target={actor} attr={attr} onChange={this.handleChange(attr)} />
     return (
       <form>
-        <fieldset>
-          {Object.keys(actor.meta.template.properties).map(input_for)}
-        </fieldset>
+        {Object.keys(actor.meta.template.properties).map(input_for)}
       </form>
     );
   }

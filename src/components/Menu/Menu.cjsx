@@ -3,11 +3,11 @@ R = require('ramda')
 React = require('react')
 ReactDOM = require('react-dom')
 ReactCSSTransitionGroup = require('react-addons-css-transition-group')
-Keycap = require('../Keycap')
 mousetrap = require('mousetrap')
 HotKeys = require('react-hotkeys').HotKeys
 
 A = require('../../actions/actions.js')
+batchActions = require('redux-batched-actions').batchActions
 ActorForm = require('../ActorForm').default
 ActionList = require('./ActionList').default
 connect = require('react-redux').connect
@@ -29,8 +29,13 @@ MainActions = React.createClass
         hotkey: "del"
         title: "Remove an actor"
         action: () ->
-          @props.dispatch(A.removeActor(@props.actor)) # should it know the current actor?
-          @props.dispatch(A.selectActor({ motion: 0 }))
+          actor = @props.actor
+          R.map(@props.dispatch, [
+            A.removeActor(actor), # should it know the current actor?
+            A.selectActor({ motion: 0 }),
+          ])
+          @props.pager.home()
+        
       change_actor:
         hotkey: "c"
         title: "Change current actor"
@@ -39,8 +44,7 @@ MainActions = React.createClass
         hotkey: "y"
         title: "Copy current actor"
         action: () ->
-          actor_clone = @props.actor.clone()
-          actor_clone.reroll()
+          actor_clone = @props.actor.clone().reroll()
           @props.dispatch(A.addActor(actor_clone)) # that easy?
 
   render: ->
@@ -80,8 +84,11 @@ CreateActor = React.createClass
         hotkey: ['enter', 'ctrl+k']
         title: 'Create'
         action: () ->
-          @props.dispatch(A.addActor(@props.actor))
-          @props.dispatch(A.selectActor(@props.actor))
+          actor = @props.actor
+          R.map(@props.dispatch, [
+            A.addActor(actor),
+            A.selectActor(actor),
+          ])
           @props.pager.home()
 
   getInitialState: ->
@@ -96,6 +103,7 @@ CreateActor.key = "create-actor"
 # A menu page holder
 Menu = React.createClass
   displayName: "Menu"
+  handlers: {}
   getInitialState: ->
     componentTree: [MainActions]
 
@@ -111,8 +119,8 @@ Menu = React.createClass
   # [M0, ..., Mn] -> [M0, ..., Mn-1]
   navigateBack: ->
     return unless @state.componentTree.length > 1
-    @setState {componentTree: _.initial(@state.componentTree)} 
-
+    @setState {componentTree: _.initial(@state.componentTree)}
+    
   # [M0, ..., Mn] -> [M0, ..., Mn, Mn+1]
   navigateTo: (component) ->
     @setState {componentTree: @state.componentTree.concat(component)} # 
@@ -122,27 +130,25 @@ Menu = React.createClass
     # todo: use child context
     React.createElement(component, _.merge({key: component.key, pager: @asPager(), menu: this}, page_props))
 
-  componentWillReceiveProps: (props) ->
-    # update the current page props so
+  componentWillUpdate: (nextProps, nextState) ->
+    if (nextState.componentTree.length > 1)
+      this.handlers =
+        cancel: @navigateBack
 
   render: ->
     currentPage = @buildPage(_.last(@state.componentTree))
-    map =
-      'cancel': ['esc', 'ctrl-g']
-    <HotKeys keyMap={map} className="menu-page">
-      <Flex>
-        <Box col={9}>
-          {@props.children}
-        </Box>
-        <Box col={3}>
-          <ReactCSSTransitionGroup component="div"
-                            transitionName="menu-page"
-                            transitionEnterTimeout=500
-                            transitionLeaveTimeout=500>
-            {currentPage}
-          </ReactCSSTransitionGroup>
-        </Box>
-      </Flex>
+    <HotKeys component={Flex} handlers={this.handlers} className="menu__page">
+      <Box col={9} className='menu__content'>
+        {@props.children}
+      </Box>
+      <Box col={3} className='menu__actions'>
+        <ReactCSSTransitionGroup component="div"
+                          transitionName="menu__page"
+                          transitionEnterTimeout=500
+                          transitionLeaveTimeout=500>
+          {currentPage}
+        </ReactCSSTransitionGroup>
+      </Box>
     </HotKeys>
 
 module.exports =
