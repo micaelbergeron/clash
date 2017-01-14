@@ -42,8 +42,7 @@ export function addActor(actor) {
 
 export const removeActor = () => {
   return {
-    multiplex: (action, m) =>
-      [Object.assign(action, { count: m })],
+    multiplex: (action, m) => [Object.assign(action, { count: m })],
     type: REMOVE_ACTOR,
     count: 1
   }
@@ -103,9 +102,9 @@ export function selectActor(selector) {
     multiplex: (action, m) => {
       if (action.motion.type === 'relative'
       ||  action.motion.type === 'id')
-        return action;
+        return [action];
       action.motion.arg *= m;
-      return action;
+      return [action];
     },
     type: SELECT_ACTOR,
     motion: {type, arg}

@@ -9,6 +9,7 @@ HotKeys = require('react-hotkeys').HotKeys
 A = require('../../actions/actions.js')
 batchActions = require('redux-batched-actions').batchActions
 ActorForm = require('../ActorForm').default
+ActorEditForm = require('../ActorEditForm').default
 ActionList = require('./ActionList').default
 connect = require('react-redux').connect
 playerFactory = require('../../models/Factories').Player.createFactory()
@@ -20,7 +21,7 @@ MainActions = React.createClass
     title: "Main menu"
     actions:
       add_actors:
-        hotkey: "+"
+        hotkey: "n a"
         title: "Add a new actor"
         action: (event) ->
          @props.pager.goto CreateActor
@@ -35,17 +36,19 @@ MainActions = React.createClass
             A.selectActor({ motion: 0 }),
           ])
           @props.pager.home()
-        
+        enable: () -> @props.actor
       change_actor:
-        hotkey: "c"
+        hotkey: "m"
         title: "Change current actor"
         action: () -> @props.pager.goto ChangeActions
-      copy_actor:
-        hotkey: "y"
+        enable: () -> @props.actor
+      copy_actor: # TODO: make a register system
+        hotkey: "y y"
         title: "Copy current actor"
         action: () ->
           actor_clone = @props.actor.clone().reroll()
           @props.dispatch(A.addActor(actor_clone)) # that easy?
+        enable: () -> @props.actor
 
   render: ->
     <ActionList {...@props} />
@@ -68,12 +71,14 @@ ChangeActions = React.createClass
           @onChange('ac', 5)
           @props.pager.back()
 
-  onChange: (prop, mod) ->
-    @props.dispatch(A.changeActorProp(@props.actor, prop, mod))
-    @props.home()
+  getInitialState: ->
+    actor: @props.actor
 
   render: ->
-    <ActionList {...@props} />
+    <ActionList {...@props} >
+      <ActorEditForm actor={@state.actor} onChangeActor={console.info} />
+    </ActionList>
+
 ChangeActions.key = "change-actor-prop"
 
 CreateActor = React.createClass
@@ -142,12 +147,7 @@ Menu = React.createClass
         {@props.children}
       </Box>
       <Box col={3} className='menu__actions'>
-        <ReactCSSTransitionGroup component="div"
-                          transitionName="menu__page"
-                          transitionEnterTimeout=500
-                          transitionLeaveTimeout=500>
-          {currentPage}
-        </ReactCSSTransitionGroup>
+        {currentPage}
       </Box>
     </HotKeys>
 

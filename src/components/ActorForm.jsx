@@ -36,16 +36,19 @@ class ActorForm extends React.Component {
   }
   
   render() {
-    let { actor } = this.props;
-    const handleChange = this.handleChange;
-   
+    let { actor } = this.props
+    const handleChange = this.handleChange
     const input_for = (attr, i) =>
-      <PropertyInput inputRef={i == 0 ? (f) => this.firstField = f:null} target={actor} attr={attr} onChange={this.handleChange(attr)} />
+      <PropertyInput inputRef={i == 0 ? (f) => this.firstField = f:null}
+                     target={actor}
+                     attr={attr}
+                     onChange={this.handleChange(attr)} />
+
     return (
       <form>
         {Object.keys(actor.meta.template.properties).map(input_for)}
       </form>
-    );
+    )
   }
 }
 

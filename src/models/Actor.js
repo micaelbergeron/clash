@@ -2,6 +2,7 @@ import uuid from 'uuid/v4';
 import Dice from './Dice';
 import R from 'ramda';
 
+// TODO: use Immutable.js
 export class Actor {
   constructor(attrs={}) {
     this.id = uuid();

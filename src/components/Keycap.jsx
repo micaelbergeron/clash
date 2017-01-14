@@ -16,7 +16,10 @@ const symbolize = R.reduce(
 );
 
 export default ({hotkey, ...props}) => {
-  const [major, ...alias] = hotkey;
+  let major = hotkey;
+  if (hotkey instanceof Array)
+    major = hotkey[0];
+
   return <kdb>{symbolize(major)}</kdb>;
 }
 

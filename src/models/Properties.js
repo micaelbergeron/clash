@@ -10,29 +10,28 @@ export default class Property {
   }
 }
 
-export const PropertyInput = ({target, attr, ...props}) => {
+export const PropertyInput = ({target, attr, value, inputRef, ...props}) => {
   let property = target.meta.template.properties[attr];
-  props = Object.assign(props, {
+  newprops = {
     key: attr,
     name: attr,
-    floatingLabelText: target[attr] ? `${attr} = ${target[attr]}` : attr,
-    ref: props.inputRef
-  });
+    ref: inputRef,
+    value: value,
+  }
 
-  let value = target.attrs[attr]
-  if (value != undefined)
-    props.value = property.inputValue(value);
-  
+  if (props.value === undefined) {
+    props.value = property.inputValue(target.attrs[attr])
+  }
   delete props.inputRef;
   return (
-    <Textfield {...props} /> 
+    <Textfield floatingLabelText={target[attr] ? `${attr} = ${target[attr]}` : attr} {...props} {...newprops} /> 
   );
 }
 
 // -- Property definitions
 export const dice = new Property(Dice, {
-  set: R.compose(x => new Dice(x), String),
-  get: x => x ? x.value : NaN,
+  set: R.compose(x => new Dice(x).roll(), String),
+  get: x => x ? x.value : 0,
   inputValue: x => x ? x._dice : "",
 });
 

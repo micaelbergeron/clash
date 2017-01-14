@@ -92,6 +92,10 @@ body {
     border-bottom: 1px solid #222;
     padding: 1em 0.33em;
 
+    &.menu__item--disabled {
+      opacity: 0.4;
+    }
+
     & .key {
       margin-right: 0.2em;
     }
