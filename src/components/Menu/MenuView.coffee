@@ -4,7 +4,7 @@ connect = require('react-redux').connect
 Menu = require('./Menu').Menu
 
 mapStateToProps = (state) ->
-  actor: state.actors[state.selectedActorIndex]
+  actor: state.getIn(['actors', state.get('selectedActorIndex')])
 
 mapDispatchToProps = (dispatch) -> 
   dispatch: dispatch

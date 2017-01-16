@@ -36,7 +36,7 @@ class App extends React.Component {
 }
 
 const mapStateToProps = (state) => ({
-  multiplexFactor: state.multiplex,
+  multiplexFactor: state.get('multiplex'),
 })
 
 export default connect(mapStateToProps)(App);

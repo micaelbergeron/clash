@@ -4,72 +4,94 @@ import R from 'ramda';
 
 // TODO: use Immutable.js
 export class Actor {
-  constructor(attrs={}) {
+  constructor() {
     this.id = uuid();
-    Object.defineProperty(this, 'attrs', { enumerable: true, value: Object.assign({}, attrs)});    
-  }
-
-  static create(attrs={}) {
-    return new Actor(attrs);
   }
 
   // filter
-  reroll() {
-    R.mapObjIndexed((prop, name, attrs) => {
-      if (prop instanceof Dice) attrs[name] = prop.roll()
-    }, this.attrs);
-    return this;
-  }
-
+  // how do we manage what to reroll at any given time?
   // create another object from the same template
-  clone() {
+  reroll() {
     if (!this.meta && !this.meta.template) throw new Error("This actor has no template.");
-    return this.meta.template.createFactory()(this.attrs);
+    return ActorTemplate.asFactory(this.meta.template).create()
   }
 }
 
+export class ActorFactory {
+  constructor(template) {
+    this._template = template
+  }
+  
+  create(attrs) {
+    let actor = R.compose(
+      R.reject(R.either(R.isNil, R.equals(NaN))),
+      R.reduce(R.merge, new Actor()),
+      R.map(x => R.objOf(x.name, x.convert(x.value))), // x.set is the property pipeline
+    )(this.template.properties);
+
+    actor.meta = {
+      template: this.template, // this should be immutable, so we can clone an object.
+    }
+    return R.merge(actor, attrs)
+  }
+
+  reroll(predicateOrArray) {
+  }
+
+  get template() {
+    const tpl = R.clone(this._template)
+    return new ActorTemplate(tpl.name, tpl.properties)
+  }
+}  
+
 export class ActorTemplate {
-  constructor(name, factory=Actor.create) {
+  constructor(name, properties=[]) {
     this.name = name;
-    this.factory = factory;
-    this.properties = {};
+    this.properties = properties;
   }
-  
-  addProperty(name, prop) {
-    this.properties[name] = prop || this.defaultProperty(name);
+
+  allPropertyNames() {
+    return R.map(x => x.name, this.properties)
+  }
+
+  mutableProperties() {
+    return R.reject(R.propEq('mutable', false), this.properties)
+  }
+
+  // TODO: Use Immutable.JS record type to ensure a complete property  
+  //  - name:   the property accessor name
+  //  - value:  any value passed into the set fn
+  //  - render: (actor) -> Component
+  //  - set:    (value) -> converted
+  addProperty(prop) {
+    this.properties.push(prop);
     return this;
+  } 
+
+  static asFactory(template) {
+    return new ActorFactory(template)
   }
 
-  applyProps(obj) {
-    return (prop, name) => {
-      const identity = x => x;
-      let propdef = Object.assign(this.defaultProperty(name), {
-        set: R.compose(x => obj.attrs[name] = x, prop.set || identity),
-        get: R.compose(prop.get || identity, () => obj.attrs[name]),
-      });
-      Object.defineProperty(obj, name, propdef);
-    };
-  }
-
-  defaultProperty(name) {
-    return {
-      enumerable: !name.startsWith("_"),
-      configurable: true,
-    }
+  // TODO: this could use a ramda lens
+  value(name, value) {
+    const idx = R.findIndex(R.propEq('name', name), this.properties)
+    this.properties = R.adjust(R.assocPath(['value'], value), idx, this.properties)
+    return this
   }
   
-  // to be able to reduce apply multiple template
   createFactory() {
-    return (attrs={}) => {
-      let actor = this.factory(attrs);
-      let applyProp = this.applyProps(actor);
+    return ActorTemplate.asFactory(this)
+  }
 
-      actor.meta = {
-        template: this, // this should be immutable, so we can clone an object.
-      }
+  createXform(target) {
+    const createAssigner = R.curry(
+      (property, value) =>
+        Object.assign({}, target, R.objOf(property.name, property.convert(value)))
+    )
 
-      R.mapObjIndexed(applyProp, this.properties);
-      return actor;
-    }
+    return R.compose(
+      R.reduce(R.merge, {}),
+      R.map(x => R.objOf(x.name, createAssigner(x)))
+    )(this.properties)
   }
 }

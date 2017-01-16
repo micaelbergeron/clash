@@ -7,7 +7,6 @@ mousetrap = require('mousetrap')
 HotKeys = require('react-hotkeys').HotKeys
 
 A = require('../../actions/actions.js')
-batchActions = require('redux-batched-actions').batchActions
 ActorForm = require('../ActorForm').default
 ActorEditForm = require('../ActorEditForm').default
 ActionList = require('./ActionList').default
@@ -24,29 +23,32 @@ MainActions = React.createClass
         hotkey: "n a"
         title: "Add a new actor"
         action: (event) ->
-         @props.pager.goto CreateActor
          event.preventDefault()
+         @props.pager.goto CreateActor
       remove_actor:
         hotkey: "del"
         title: "Remove an actor"
-        action: () ->
+        action: (event) ->
+          event.preventDefault()
           actor = @props.actor
-          R.map(@props.dispatch, [
+          @props.dispatch(A.batchActions([
             A.removeActor(actor), # should it know the current actor?
             A.selectActor({ motion: 0 }),
-          ])
+          ]))
           @props.pager.home()
         enable: () -> @props.actor
       change_actor:
         hotkey: "m"
         title: "Change current actor"
-        action: () -> @props.pager.goto ChangeActions
+        action: (event) ->
+          event.preventDefault()
+          @props.pager.goto ChangeActions
         enable: () -> @props.actor
       copy_actor: # TODO: make a register system
         hotkey: "y y"
         title: "Copy current actor"
         action: () ->
-          actor_clone = @props.actor.clone().reroll()
+          actor_clone = @props.actor.meta.template.createFactory().create()
           @props.dispatch(A.addActor(actor_clone)) # that easy?
         enable: () -> @props.actor
 
@@ -58,25 +60,49 @@ ChangeActions = React.createClass
   getDefaultProps: ->
     title: "Change actor"
     actions:
-      hp:
-        hotkey: 'h'
-        title: 'Hit points'
-        action: () ->
-          @onChange('hp', 10)
-          @props.pager.back()
-      ac:
-        hotkey: 'a'
-        title: 'Armor class'
-        action: () ->
-          @onChange('ac', 5)
-          @props.pager.back()
+      add:
+        hotkey: ['ctrl+a', '+']
+        title: 'Add'
+        action: (event) ->
+          event.preventDefault()
+          @props.dispatch(A.batchActions([
+            A.changeActor(@props.actor, @props.mutation, R.add),
+            A.selectActor(@props.actor),
+          ]))
+          @props.pager.home()
+      subtract:
+        hotkey: ['ctrl+x', '-']
+        title: 'Subtract'
+        action: (event) ->
+          event.preventDefault()
+          @props.dispatch(A.batchActions([
+            A.changeActor(@props.actor, @props.mutation, R.subtract),
+            A.selectActor(@props.actor),
+          ]))
+          @props.pager.home()
+      set:
+        hotkey: ['enter', 'ctrl+s']
+        title: 'Set'
+        action: (event) ->
+          event.preventDefault()
+          @props.dispatch(A.batchActions([
+            A.changeActor(@props.actor, @props.mutation),
+            A.selectActor(@props.actor),
+          ]))
+          @props.pager.home()
 
   getInitialState: ->
-    actor: @props.actor
+    mutation: {}
+
+  handleChangeActor: (actor) ->
+    # only use defined properties
+    mutablePropertyNames = R.map(((x) -> x.name), @props.actor.meta.template.mutableProperties()) 
+    mutation = R.pick(mutablePropertyNames, actor)
+    @setState({ mutation })    
 
   render: ->
-    <ActionList {...@props} >
-      <ActorEditForm actor={@state.actor} onChangeActor={console.info} />
+    <ActionList {...@props} {...@state}>
+      <ActorEditForm actor={@props.actor} onChangeActor={@handleChangeActor} />
     </ActionList>
 
 ChangeActions.key = "change-actor-prop"
@@ -90,18 +116,18 @@ CreateActor = React.createClass
         title: 'Create'
         action: () ->
           actor = @props.actor
-          R.map(@props.dispatch, [
+          @props.dispatch(A.batchActions([
             A.addActor(actor),
             A.selectActor(actor),
-          ])
+          ]))
           @props.pager.home()
 
   getInitialState: ->
-    actor: playerFactory()
+    actor: playerFactory.create()
 
   render: ->
     <ActionList {...@props} actor={@state.actor} >
-      <ActorForm actor={@state.actor} onChangeActor={(actor) => this.setState({ actor: actor })} />
+      <ActorForm actor={@state.actor} onChangeActor={(actor) => this.setState({ actor })} />
     </ActionList>
 CreateActor.key = "create-actor"
 

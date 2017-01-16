@@ -76,6 +76,8 @@
   },
   "dependencies": {
     "core-js": "^2.4.1",
+    "folktale": "^2.0.0-alpha2",
+    "immutable": "^3.8.1",
     "mersennetwister": "^0.2.3",
     "mousetrap": "^1.6.0",
     "normalize.css": "^5.0.0",
@@ -90,6 +92,7 @@
     "react-tap-event-plugin": "^2.0.1",
     "redux": "^3.6.0",
     "redux-batched-actions": "^0.1.5",
+    "redux-immutable": "^3.0.10",
     "redux-undo": "^0.6.1",
     "reflexbox": "^2.2.3",
     "sass-loader": "^4.1.1"

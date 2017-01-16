@@ -11,24 +11,26 @@ export default class ActorEditForm extends React.Component {
     super(props)
 
     this.state = {
-      actor: props.actor.clone(),
+      form: {},
+      mutation: {},
     }
 
     this.handleChange = attr => (event, value) => {
-      let mutation = {}
-      mutation[attr] = value
-      mutation = Object.assign(this.state.actor.clone(), mutation)
-      mutation = { attrs: { [attr]: { value: this.props.actor[attr] + mutation[attr] } } }
-      this.changeActor(mutation)
+      const template = this.props.actor.meta.template
+      const mutation = R.objOf(attr, value)
+      const xform = template.createXform(this.state.mutation)
+      
+      // update the form to show the correct values
+      this.setState({ mutation, form: R.merge(this.state.form, R.objOf(attr, value))})
+      
+      // do what you want with the new actor
+      // should I pass the mutation instead?
+      this.props.onChangeActor(xform[attr](value))
     }
   }
 
   componentDidMount() {
     this.firstField.input.focus()
-  }
-
-  changeActor(mutation) {
-    this.setState({actor: Object.assign(this.state.actor, mutation)})
   }
   
   validate() {
@@ -37,23 +39,20 @@ export default class ActorEditForm extends React.Component {
   
   render() {
     let { actor } = this.props
-    const handleChange = this.handleChange
-    const input_for = (attr, i) => {
-      return (
-        <Flex>
-          <Box p="1">{actor[attr]}</Box>
-          <PropertyInput target={this.state.actor}
-                         floatingLabelText={labelText}
-                         attr={attr}
-                         onChange={this.handleChange(attr)} />
-          
-        </Flex>
-      )
-    }
+
+    const input_for = (property, i) =>
+      <Textfield name={property.name}
+                 value={this.state.form[property.name] || ""}
+                 floatingLabelText={`${property.name}: ${actor[property.name]}`}
+                 ref={i == 0 ? (f) => this.firstField = f:null}
+                 onChange={this.handleChange(property.name)} />
+
     return (
       <form>
-        {Object.keys(actor.meta.template.properties).map(input_for)}
+        {R.addIndex(R.map)(input_for, actor.meta.template.mutableProperties())}
       </form>
     )
   }
 }
+
+

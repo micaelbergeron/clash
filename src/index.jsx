@@ -9,6 +9,8 @@ import darkBaseTheme from 'material-ui/styles/baseThemes/darkBaseTheme';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import getMuiTheme from 'material-ui/styles/getMuiTheme';
 
+import Perf from 'react-addons-perf'
+window.Perf = Perf
 
 // Render the main component into the dom
 render(

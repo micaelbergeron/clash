@@ -8,12 +8,28 @@ export const GameObject = new ActorTemplate('object')
   .addProperty('notes')
 
 export const Living = new ActorTemplate('living')
-  .addProperty('hp', Props.dice)
-  .addProperty('init', Props.dice)
+  .addProperty(Props.dice('ini', '1d20'))
+  .addProperty(Props.dice('hp', 0))
+  .addProperty(Props.dice('ac', 10))
 
 export const NPC = Living
-  .addProperty('side', Props.choice(['good', 'neutral', 'bad']))
+  .addProperty(Props.choice(['good', 'neutral', 'bad'])('side', { mutable: false }))
 
 export const Player = Living
-  .addProperty('spot', Props.dice)
-  .addProperty('listen', Props.dice);
+  .addProperty(Props.dice('spot'))
+  .addProperty(Props.dice('listen'));
+
+
+// -- Tests
+
+const playerFactory = Player.createFactory()
+const player1 = playerFactory.create()
+
+const playerXform = Player.createXform(player1)
+
+console.info(player1)
+console.info(playerXform.ac('1d20'))
+
+const PlayerWithValues = Player.value('hp', '1d20').createFactory().create()
+console.info(PlayerWithValues)
+

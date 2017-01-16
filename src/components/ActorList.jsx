@@ -50,7 +50,7 @@ class ActorList extends React.Component {
       },
     }
     
-    let { actors, selectedActor, ...rest } = Object.assign({ actors: [], selectedActor: 0 }, this.props);
+    let { actors, selectedActor, ...rest } = this.props;
     this.props = rest;
 
     return(
@@ -65,9 +65,9 @@ class ActorList extends React.Component {
 
 const ActorListView = connect(
   (state) => ({
-    actors: state.actors,
-    selectedActor: state.actors[state.selectedActorIndex],
-    multiplexFactor: state.multiplex,
+    actors: state.get('actors'),
+    selectedActor: state.getIn(['actors', state.get('selectedActorIndex')]), // reselect
+    multiplexFactor: state.get('multiplex'),
   }),
   (dispatch) => ({
     onAddActor: (actor) =>          dispatch(actions.addActor(actor)),

@@ -4,22 +4,32 @@ import { withReflex, Box, Flex } from 'reflexbox';
 
 
 const Attribute = (prop, name) =>
-  <Box style={{backgroundColor: 'grey'}} key={name} col={2} m={1} p={1}>{`${name}: ${prop.value}`}</Box>
+  <Box style={{backgroundColor: 'grey'}} key={name} col={2} m={1} p={1}>{`${name}: ${prop}`}</Box>
 
-class ActorEntry extends React.Component {
+class ActorEntry extends React.PureComponent {
+  shouldComponentUpdate(newProps) {
+    return this.props.actor != newProps
+        || this.props.selected != newProps.selected;
+  }
+  
   render() {
-    let { actor } = this.props;
+    let { actor } = this.props
+    const template = actor.meta.template
     let selected = this.props.selected ? 'selected' : null;
+
+    const visibleAttributes = R.map(x => x.name, template.properties)
+    
     const attributes = R.compose(R.values,
-                                 R.mapObjIndexed(Attribute));
+                                 R.mapObjIndexed(Attribute),
+                                 R.pick(visibleAttributes))
     
     return (
       <li onClick={() => this.props.onClick(actor)} className={selected}>
         <div className={'entry__pin'} style={{backgroundColor: '#4455BB'}} />
-        <Flex>{attributes(actor.attrs)}</Flex>
+        <Flex>{attributes(actor)}</Flex>
       </li>
     )
   }
 }
 
-export default withReflex()(ActorEntry);
+export default ActorEntry;
