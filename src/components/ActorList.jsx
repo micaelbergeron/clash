@@ -6,18 +6,21 @@ import R from 'ramda';
 import ActorEntry from './ActorEntry';
 import { connect } from 'react-redux';
 import { HotKeys } from 'react-hotkeys';
+import { CombatView, View } from 'components/ActorListViews'; 
 
 import * as actions from 'actions/actions';
 
 const map = {
-  'select_down': 'j',
-  'select_up': 'k',
+  'select_down': ['j', 'down'],
+  'select_up': ['k', 'up'],
   'select_first': 'g g',
   'select_last': 'G',
   'multiplex': R.range(0,10).map(String),
+  'view_combat': ['ctrl+m c'],
+  'view_edit': ['ctrl+m e'],
 }
 
-// TODO: virtualize the rendering
+// TODO: virtualize the rendering with react-virtualized
 class ActorList extends React.Component {
   displayName: 'ActorList';
 
@@ -27,7 +30,10 @@ class ActorList extends React.Component {
 
   constructor(props) {
     super(props)
-    this.state = { showHelp: false }
+    this.state = {
+      showHelp: false,
+      view: props.view || new View(),
+    }
     this.componentDidMount = this.focus;
     this.componentDidUpdate = this.focus;
   }
@@ -48,6 +54,8 @@ class ActorList extends React.Component {
         let factor = 10*this.props.multiplexFactor + (event.keyCode - 48)
         this.props.onSetMultiplex(factor)
       },
+      'view_combat': (event) => this.setState({ view: CombatView }),
+      'view_edit': (event) => this.setState({ view: new View({ sortFn: a => a.name }) }),
     }
     
     let { actors, selectedActor, ...rest } = this.props;
@@ -55,9 +63,9 @@ class ActorList extends React.Component {
 
     return(
       <HotKeys keyMap={map} handlers={handlers} attach={window} focused={true} component="ol" id="initiative-list" className="pure-table pure-table-horizontal">
-      {actors.map(entry =>
-        <ActorEntry key={entry.id} actor={entry} selected={entry === selectedActor} onClick={this.props.onSelectActor} />
-      )}
+        {actors.sortBy(this.state.view.sortFn).map(entry =>
+          <ActorEntry key={entry.id} view={this.state.view} actor={entry} selected={entry === selectedActor} onClick={this.props.onSelectActor} />
+         )}
       </HotKeys>
     )
   }
@@ -65,9 +73,9 @@ class ActorList extends React.Component {
 
 const ActorListView = connect(
   (state) => ({
-    actors: state.get('actors'),
-    selectedActor: state.getIn(['actors', state.get('selectedActorIndex')]), // reselect
-    multiplexFactor: state.get('multiplex'),
+    actors: state.actors.get('repo'), // list?
+    selectedActor: state.actors.getIn(['repo', state.actors.get('selectedActorIndex')]), // reselect
+    multiplexFactor: state.multiplex,
   }),
   (dispatch) => ({
     onAddActor: (actor) =>          dispatch(actions.addActor(actor)),

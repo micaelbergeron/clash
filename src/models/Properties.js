@@ -2,10 +2,24 @@ import React from 'react';
 import R from 'ramda';
 import Textfield from 'material-ui/TextField';
 import { roll } from './Dice';
+import { templateOf } from './Actor'
+import Immutable from 'immutable'
 
+
+const PARSER_DICE = 'DICE';
+const PARSER_CHOICE = 'CHOICE';
+const PARSER_NONE = 'NONE';
+
+const defaultProperty = Immutable.Map({
+  name: undefined,
+  value: undefined,
+  parser: PARSER_NONE,
+  parserArgs: [],
+  config: {},  
+})
 
 export const PropertyInput = ({target, attr, inputRef, ...props}) => {
-  let property = target.meta.template.properties[attr];
+  let property = templateOf(target).properties[attr];
   newprops = {
     key: attr,
     name: attr,
@@ -18,15 +32,39 @@ export const PropertyInput = ({target, attr, inputRef, ...props}) => {
   );
 }
 
-// -- Property definitions, setters?
-export const dice = (name, value=NaN, config={}) => R.merge({
-  name,
-  convert: R.compose(roll, String),
-  value,
-}, config);
 
-export const choice = (choices) => (name, config={}) => R.merge({
+export const PARSERS = {
+  [PARSER_DICE]: R.compose(roll, String),
+  [PARSER_CHOICE]: (choices, value) => R.compose(x => R.findIndex(R.equals(x), choices), String)(value),
+  [PARSER_NONE]: R.identity,
+}
+
+export const parserOf = R.memoize(
+  property => PARSERS[property.get('parser')]
+)
+
+// -- Property definitions, setters?
+export const text = (name, value="", config={}) => defaultProperty.merge({
   name,
-  convert: R.compose(x => R.findIndex(R.equals(x), choices), String),
+  value,
+  config,
+});
+
+export const dice = (name, value=NaN, config={}) => defaultProperty.merge({
+  name,
+  parser: PARSER_DICE,
+  value,
+  config
+});
+
+export const choice = (choices) => (name, config={}) => defaultProperty.merge({
+  name,
+  parser: PARSER_CHOICE,
+  parserArgs: [choices],
   value: choices[0],
-}, config);
+  config,
+});
+
+
+// -- Tests
+console.info(dice('test', 0).set('value', 20))

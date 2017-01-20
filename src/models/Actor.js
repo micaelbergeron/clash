@@ -1,21 +1,16 @@
 import uuid from 'uuid/v4';
 import Dice from './Dice';
 import R from 'ramda';
+import { parserOf } from './Properties'
+import Immutable from 'immutable' 
 
-// TODO: use Immutable.js
-export class Actor {
-  constructor() {
-    this.id = uuid();
-  }
+export const templateOf = R.memoize(actor =>
+  ActorTemplate.asTemplate(actor.get('_template'))
+)
 
-  // filter
-  // how do we manage what to reroll at any given time?
-  // create another object from the same template
-  reroll() {
-    if (!this.meta && !this.meta.template) throw new Error("This actor has no template.");
-    return ActorTemplate.asFactory(this.meta.template).create()
-  }
-}
+export const factoryOf = R.memoize(actor =>
+  ActorTemplate.asFactory(templateOf(actor))
+)
 
 export class ActorFactory {
   constructor(template) {
@@ -25,14 +20,16 @@ export class ActorFactory {
   create(attrs) {
     let actor = R.compose(
       R.reject(R.either(R.isNil, R.equals(NaN))),
-      R.reduce(R.merge, new Actor()),
-      R.map(x => R.objOf(x.name, x.convert(x.value))), // x.set is the property pipeline
+      R.reduce(R.merge, { id: uuid() }),
+      R.map(x => R.objOf(x.get('name'),
+                         parserOf(x).call(null,
+                                          x.get('value'),
+                                          ...x.get('parserArgs'))
+      )),
     )(this.template.properties);
 
-    actor.meta = {
-      template: this.template, // this should be immutable, so we can clone an object.
-    }
-    return R.merge(actor, attrs)
+    actor._template = Immutable.Map(this.template)
+    return Immutable.Map(R.merge(actor, attrs))
   }
 
   reroll(predicateOrArray) {
@@ -45,17 +42,17 @@ export class ActorFactory {
 }  
 
 export class ActorTemplate {
-  constructor(name, properties=[]) {
+  constructor(name, properties=Immutable.List()) {
     this.name = name;
     this.properties = properties;
   }
 
   allPropertyNames() {
-    return R.map(x => x.name, this.properties)
+    return R.map(x => x.get('name'), this.properties)
   }
 
   mutableProperties() {
-    return R.reject(R.propEq('mutable', false), this.properties)
+    return R.reject(x => x.getIn(['config', 'mutable']) === false, this.properties)
   }
 
   // TODO: Use Immutable.JS record type to ensure a complete property  
@@ -64,18 +61,23 @@ export class ActorTemplate {
   //  - render: (actor) -> Component
   //  - set:    (value) -> converted
   addProperty(prop) {
-    this.properties.push(prop);
+    this.properties = this.properties.push(prop);
     return this;
-  } 
+  }
+
+  static asTemplate(template) {
+    return new ActorTemplate(template.get('name'), template.get('properties'))
+  }
 
   static asFactory(template) {
     return new ActorFactory(template)
   }
 
-  // TODO: this could use a ramda lens
   value(name, value) {
-    const idx = R.findIndex(R.propEq('name', name), this.properties)
-    this.properties = R.adjust(R.assocPath(['value'], value), idx, this.properties)
+    const idx = this.properties.findIndex(x => x.get('name') === name)
+    if (idx !== -1) {
+      this.properties = this.properties.update(idx, p => p.set('value', value))
+    }
     return this
   }
   
@@ -83,15 +85,24 @@ export class ActorTemplate {
     return ActorTemplate.asFactory(this)
   }
 
+  // TODO: use immutable instead
   createXform(target) {
     const createAssigner = R.curry(
       (property, value) =>
-        Object.assign({}, target, R.objOf(property.name, property.convert(value)))
+        Object.assign({},
+                      target,
+                      R.objOf(property.name,
+                              parserOf(property).call(null,
+                                                      value,
+                                                      ...property.get('parserArgs')
+                              )
+                      )
+        )
     )
 
     return R.compose(
       R.reduce(R.merge, {}),
-      R.map(x => R.objOf(x.name, createAssigner(x)))
-    )(this.properties)
+      R.map(x => R.objOf(x.get('name'), createAssigner(x)))
+    )(this.properties);
   }
 }

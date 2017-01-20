@@ -4,6 +4,7 @@ import * as A from 'actions/actions';
 import Textfield from 'material-ui/TextField';
 import { PropertyInput } from '../models/Properties';
 import { withReflex, Flex, Box } from 'reflexbox';
+import { templateOf } from '../models/Actor';
 
 
 export default class ActorEditForm extends React.Component {
@@ -16,7 +17,7 @@ export default class ActorEditForm extends React.Component {
     }
 
     this.handleChange = attr => (event, value) => {
-      const template = this.props.actor.meta.template
+      const template = templateOf(this.props.actor)
       const mutation = R.objOf(attr, value)
       const xform = template.createXform(this.state.mutation)
       
@@ -49,7 +50,7 @@ export default class ActorEditForm extends React.Component {
 
     return (
       <form>
-        {R.addIndex(R.map)(input_for, actor.meta.template.mutableProperties())}
+        {R.addIndex(R.map)(input_for, templateOf(actor).mutableProperties())}
       </form>
     )
   }

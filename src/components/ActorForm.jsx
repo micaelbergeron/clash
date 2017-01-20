@@ -7,7 +7,7 @@ import * as A from 'actions/actions';
 import Textfield from 'material-ui/TextField';
 import { PropertyInput } from '../models/Properties';
 import { Player } from '../models/Factories';
-
+import { templateOf } from '../models/Actor';
 
 const playerFactory = Player.createFactory();
 
@@ -17,12 +17,13 @@ class ActorForm extends React.Component {
     super(props)
 
     this.state = {
-      form: R.clone(this.props.actor)
+      form: this.props.actor.toJS()
     }
 
     this.handleChange = attr => (event, value) => {
       const mutation = R.objOf(attr, value)
-      const template = this.props.actor.meta.template.value(attr, value)
+      let template = templateOf(this.props.actor)
+      template = template.value(attr, value)
       // mutate the template default value if we create an ad-hoc template
       const xform = template.createXform(this.props.actor)
       this.setState({ form: R.merge(this.state.form, R.objOf(attr, value))})
@@ -50,7 +51,7 @@ class ActorForm extends React.Component {
 
     return (
       <form>
-        {R.addIndex(R.map)(input_for, actor.meta.template.properties)}
+        {R.addIndex(R.map)(input_for, templateOf(actor).properties.toJS())}
       </form>
     )
   }

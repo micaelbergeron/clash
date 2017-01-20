@@ -11,6 +11,7 @@ ActorForm = require('../ActorForm').default
 ActorEditForm = require('../ActorEditForm').default
 ActionList = require('./ActionList').default
 connect = require('react-redux').connect
+templateOf = require('../../models/Actor').templateOf
 playerFactory = require('../../models/Factories').Player.createFactory()
 Box = require('reflexbox').Box;
 Flex = require('reflexbox').Flex;
@@ -48,7 +49,7 @@ MainActions = React.createClass
         hotkey: "y y"
         title: "Copy current actor"
         action: () ->
-          actor_clone = @props.actor.meta.template.createFactory().create()
+          actor_clone = templateOf(@props.actor).createFactory().create()
           @props.dispatch(A.addActor(actor_clone)) # that easy?
         enable: () -> @props.actor
 
@@ -96,7 +97,7 @@ ChangeActions = React.createClass
 
   handleChangeActor: (actor) ->
     # only use defined properties
-    mutablePropertyNames = R.map(((x) -> x.name), @props.actor.meta.template.mutableProperties()) 
+    mutablePropertyNames = R.map(((x) -> x.name), templateOf(@props.actor).mutableProperties()) 
     mutation = R.pick(mutablePropertyNames, actor)
     @setState({ mutation })    
 

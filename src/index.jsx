@@ -10,6 +10,11 @@ import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import getMuiTheme from 'material-ui/styles/getMuiTheme';
 
 import Perf from 'react-addons-perf'
+import installDevTools from 'immutable-devtools'
+import Immutable from 'immutable'
+
+// TODO: debug switch
+// installDevTools(Immutable);
 window.Perf = Perf
 
 // Render the main component into the dom

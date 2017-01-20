@@ -12,8 +12,11 @@ import { connect } from 'react-redux';
 import ActorList from './ActorList';
 import Menu from './Menu/MenuView';
 import ModeLine from './ModeLine';
+import { IconButton } from 'material-ui'
+import Folder from 'material-ui/svg-icons/file/folder'
 
 import { selectActor } from 'actions/actions.js';
+import { CombatView } from './ActorListViews'
 
 const map = {
   'cancel': ['esc', 'ctrl+g'],
@@ -23,10 +26,13 @@ class App extends React.Component {
   render() {
     return (
       <main>
-        <h1 className="app-name">Clash</h1> 
+        <h1 className="app-name">
+          Clash
+          <IconButton onClick={(e) => console.log('save store')}><Folder /></IconButton>
+        </h1>
         <HotKeys keyMap={map} className="app">
           <Menu>
-            <ActorList />
+            <ActorList view={CombatView} />
           </Menu>
         </HotKeys>
         <ModeLine multiplex={this.props.multiplexFactor} mode={'default'} />
@@ -36,7 +42,7 @@ class App extends React.Component {
 }
 
 const mapStateToProps = (state) => ({
-  multiplexFactor: state.get('multiplex'),
+  multiplexFactor: state.multiplex,
 })
 
 export default connect(mapStateToProps)(App);

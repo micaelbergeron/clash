@@ -16,6 +16,7 @@ export const NPC = Living
   .addProperty(Props.choice(['good', 'neutral', 'bad'])('side', { mutable: false }))
 
 export const Player = Living
+  .addProperty(Props.text('name'))
   .addProperty(Props.dice('spot'))
   .addProperty(Props.dice('listen'));
 

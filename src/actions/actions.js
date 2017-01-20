@@ -1,5 +1,6 @@
 import { batchActions as _batchActions } from 'redux-batched-actions'
 import R from 'ramda'
+import { factoryOf } from '../models/Actor'
 
 export function batchActions(actions) {
   // action -> [actions]
@@ -53,7 +54,9 @@ export const REMOVE_ACTOR = 'REMOVE_ACTOR';
 export const SELECT_ACTOR = 'SELECT_ACTOR';
 export const SET_MULTIPLEX = 'SET_MULTIPLEX';
 export const NOTIFY = 'NOTIFY';
+export const SAVE_STORE = 'SAVE';
 
+export const save = R.always({ type: SAVE_STORE })
 
 // add a message in the notification area
 export function notify(message, args) {
@@ -75,7 +78,7 @@ export const changeActor = notifyFor((actor, mutation, withFn=R.nthArg(1)) => {
 export const addActor = notifyFor((actor) => {
   return {
     multiplex: (action, m) => batchActions(
-      R.times(_ => addActor(actor.meta.template.createFactory().create()), m)
+      R.times(_ => addActor(factoryOf(actor).create()), m)
     ),
     type: ADD_ACTOR,
     actor
@@ -115,10 +118,10 @@ export function selectActor(selector) {
     }
   }
 
-  if (!parsed && selector.hasOwnProperty('id')) {
+  if (!parsed && selector.has && selector.has('id')) {
     parsed = true;
     type = 'id';
-    arg = selector.id;        
+    arg = selector.get('id');
   }
 
   if (!parsed && selector.hasOwnProperty('relative')) {
