@@ -11,14 +11,15 @@ export const Living = new ActorTemplate('living')
   .addProperty(Props.dice('ini', '1d20'))
   .addProperty(Props.dice('hp', 0))
   .addProperty(Props.dice('ac', 10))
+  .addProperty(Props.dice('spot', '1d20'))
+  .addProperty(Props.dice('listen', '1d20'))
 
 export const NPC = Living
   .addProperty(Props.choice(['good', 'neutral', 'bad'])('side', { mutable: false }))
 
 export const Player = Living
   .addProperty(Props.text('name'))
-  .addProperty(Props.dice('spot'))
-  .addProperty(Props.dice('listen'));
+  .value('side', 'good')
 
 
 // -- Tests

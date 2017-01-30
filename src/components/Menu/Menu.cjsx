@@ -52,6 +52,7 @@ MainActions = React.createClass
           actor_clone = templateOf(@props.actor).createFactory().create()
           @props.dispatch(A.addActor(actor_clone)) # that easy?
         enable: () -> @props.actor
+  
 
   render: ->
     <ActionList {...@props} />
@@ -97,8 +98,8 @@ ChangeActions = React.createClass
 
   handleChangeActor: (actor) ->
     # only use defined properties
-    mutablePropertyNames = R.map(((x) -> x.name), templateOf(@props.actor).mutableProperties()) 
-    mutation = R.pick(mutablePropertyNames, actor)
+    mutablePropertyNames = R.map(((x) -> x.get('name')), templateOf(@props.actor).mutableProperties())
+    mutation = R.pick(mutablePropertyNames.toJS(), actor)
     @setState({ mutation })    
 
   render: ->
@@ -126,9 +127,13 @@ CreateActor = React.createClass
   getInitialState: ->
     actor: playerFactory.create()
 
+  handleChangeActor: (actor) ->
+    # only use defined properties
+    @setState({ actor })    
+
   render: ->
     <ActionList {...@props} actor={@state.actor} >
-      <ActorForm actor={@state.actor} onChangeActor={(actor) => this.setState({ actor })} />
+      <ActorForm actor={@state.actor} onChangeActor={@handleChangeActor} />
     </ActionList>
 CreateActor.key = "create-actor"
 

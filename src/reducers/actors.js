@@ -1,18 +1,24 @@
 import R from 'ramda'
 import * as actions from 'actions/actions'
 import Immutable from 'immutable'
+import { View } from 'components/ActorListViews'
 
 const has_id = R.curry((id, a) => a.id == id)
 
 const initialState = Immutable.Map({
   repo: Immutable.List(),
   selectedActorId: -1,
+  view: 'DefaultView',
 })
 
-export default (state=initialState, action) =>
-  R.cond([
+export default (state=initialState, action) => {
+  const nextState = R.cond([
     [R.equals(actions.CHANGE_ACTOR), _ => {
-      const actorIndex = R.findIndex(R.propEq('id', action.actor.id), state.get('repo').toJS())
+      const actor_id = action.actor.get('id')
+      const actorIndex = state.get('repo').findIndex(a => a.get('id') === actor_id)
+      if (actorIndex === -1)
+        return state;
+      
       return state.setIn(['repo', actorIndex], action.actor)
     }],
     
@@ -38,6 +44,14 @@ export default (state=initialState, action) =>
       // cycle through the list
       return state.set('selectedActorIndex', next_idx)
     }],
+
+    [R.equals(actions.CHANGE_ACTORS_VIEW), _ => {
+      return state.set('view', action.viewName)
+    }],
     
     [R.T, action => state]
   ])(action.type)
+
+  // after the action went through, reorder the actors
+  return nextState.update('repo', repo => repo.sortBy(nextState.get('view').orderFn))
+}

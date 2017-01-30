@@ -5,7 +5,7 @@ import { parserOf } from './Properties'
 import Immutable from 'immutable' 
 
 export const templateOf = R.memoize(actor =>
-  ActorTemplate.asTemplate(actor.get('_template'))
+  ActorTemplate.asTemplate(actor.get('_template').toObject())
 )
 
 export const factoryOf = R.memoize(actor =>
@@ -22,9 +22,7 @@ export class ActorFactory {
       R.reject(R.either(R.isNil, R.equals(NaN))),
       R.reduce(R.merge, { id: uuid() }),
       R.map(x => R.objOf(x.get('name'),
-                         parserOf(x).call(null,
-                                          x.get('value'),
-                                          ...x.get('parserArgs'))
+                         parserOf(x).apply(null, [x.get('value'), x.get('parserArgs')])
       )),
     )(this.template.properties);
 
@@ -36,8 +34,7 @@ export class ActorFactory {
   }
 
   get template() {
-    const tpl = R.clone(this._template)
-    return new ActorTemplate(tpl.name, tpl.properties)
+    return new ActorTemplate(this._template.name, this._template.properties)
   }
 }  
 
@@ -66,7 +63,7 @@ export class ActorTemplate {
   }
 
   static asTemplate(template) {
-    return new ActorTemplate(template.get('name'), template.get('properties'))
+    return new ActorTemplate(template.name, template.properties)
   }
 
   static asFactory(template) {
@@ -91,11 +88,8 @@ export class ActorTemplate {
       (property, value) =>
         Object.assign({},
                       target,
-                      R.objOf(property.name,
-                              parserOf(property).call(null,
-                                                      value,
-                                                      ...property.get('parserArgs')
-                              )
+                      R.objOf(property.get('name'),
+                              parserOf(property).apply(null, [value, property.get('parserArgs')])
                       )
         )
     )

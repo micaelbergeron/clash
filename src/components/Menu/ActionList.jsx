@@ -41,7 +41,7 @@ export default class ActionList extends React.Component {
 
     return (
       <HotKeys keyMap={map} handlers={handlers} focused={true} attach={this.menu} >
-        <p className="menu__title">{this.props.title}</p>
+        <p className="title">{this.props.title}</p>
         {this.props.children}
         <div rel="action-list">
           {items(actions)}

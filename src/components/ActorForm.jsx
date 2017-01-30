@@ -25,9 +25,9 @@ class ActorForm extends React.Component {
       let template = templateOf(this.props.actor)
       template = template.value(attr, value)
       // mutate the template default value if we create an ad-hoc template
-      const xform = template.createXform(this.props.actor)
-      this.setState({ form: R.merge(this.state.form, R.objOf(attr, value))})
-      this.props.onChangeActor(xform[attr](value))
+      const xform = template.createXform(this.props.actor.toJS())
+      this.setState({ form: R.merge(this.state.form, mutation) })
+      this.props.onChangeActor(this.props.actor.merge(xform[attr](value)))
     }
   }
 
@@ -43,17 +43,18 @@ class ActorForm extends React.Component {
     let { actor } = this.props
 
     const input_for = (property, i) =>
-      <Textfield name={property.name}
-                 value={this.state.form[property.name]}
-                 floatingLabelText={property.name}
-                 ref={i == 0 ? (f) => this.firstField = f:null}
-                 onChange={this.handleChange(property.name)} />
+      <PropertyInput name={property.name}
+                     property={property}
+                     value={this.state.form[property.name]}
+                     floatingLabelText={property.name}
+                     inputRef={i == 0 ? (f) => this.firstField = f:null}
+                     onChange={this.handleChange(property.name)} />
 
-    return (
+      return (
       <form>
         {R.addIndex(R.map)(input_for, templateOf(actor).properties.toJS())}
       </form>
-    )
+      )
   }
 }
 

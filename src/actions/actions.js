@@ -1,6 +1,7 @@
 import { batchActions as _batchActions } from 'redux-batched-actions'
 import R from 'ramda'
 import { factoryOf } from '../models/Actor'
+import * as Views from 'components/ActorListViews'
 
 export function batchActions(actions) {
   // action -> [actions]
@@ -52,6 +53,8 @@ export const CHANGE_ACTOR = 'CHANGE_ACTOR';
 export const ADD_ACTOR = 'ADD_ACTOR';
 export const REMOVE_ACTOR = 'REMOVE_ACTOR';
 export const SELECT_ACTOR = 'SELECT_ACTOR';
+export const CHANGE_ACTORS_VIEW = 'CHANGE_ACTORS_VIEW'; // use a router? could be cool, /combat or /edit
+
 export const SET_MULTIPLEX = 'SET_MULTIPLEX';
 export const NOTIFY = 'NOTIFY';
 export const SAVE_STORE = 'SAVE';
@@ -70,7 +73,7 @@ export function notify(message, args) {
 export const changeActor = notifyFor((actor, mutation, withFn=R.nthArg(1)) => {
   return {
     type: CHANGE_ACTOR,
-    actor: R.mergeWith(withFn, actor, mutation),
+    actor: actor.mergeWith(withFn, mutation),
   }
 })
 
@@ -155,6 +158,13 @@ export function selectActor(selector) {
     motion: {type, arg}
   }
 }
+
+// todo: throw on wrong view
+export const changeActorsView = (viewName) => ({
+  type: CHANGE_ACTORS_VIEW,
+  viewName,
+  view: Views[viewName],
+})
 
 // the multiplex is a value the multiplexMiddleware will use to mutate actions on-the-fly
 // so they are applied N times.

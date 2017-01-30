@@ -23,9 +23,10 @@ class ActorEntry extends React.PureComponent {
                                  R.mapObjIndexed(Attribute),
                                  R.pick(visibleAttributes))
     
+    // TODO: tag system
     return (
       <li onClick={() => this.props.onClick(actor)} className={selected}>
-        <div className={'entry__pin'} style={{backgroundColor: '#4455BB'}} />
+        <div className={'entry__pin'} style={{backgroundColor: view.pinColor(actor)}} />
         <Flex>{attributes(actorJs)}</Flex>
       </li>
     )

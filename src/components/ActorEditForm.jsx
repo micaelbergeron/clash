@@ -22,7 +22,7 @@ export default class ActorEditForm extends React.Component {
       const xform = template.createXform(this.state.mutation)
       
       // update the form to show the correct values
-      this.setState({ mutation, form: R.merge(this.state.form, R.objOf(attr, value))})
+      this.setState({ mutation, form: R.merge(this.state.form, mutation) })
       
       // do what you want with the new actor
       // should I pass the mutation instead?
@@ -42,11 +42,11 @@ export default class ActorEditForm extends React.Component {
     let { actor } = this.props
 
     const input_for = (property, i) =>
-      <Textfield name={property.name}
-                 value={this.state.form[property.name] || ""}
-                 floatingLabelText={`${property.name}: ${actor[property.name]}`}
+      <Textfield name={property.get('name')}
+                 value={this.state.form[property.get('name')] || ""}
+                 floatingLabelText={`${property.get('name')}: ${actor.get(property.get('name'))}`}
                  ref={i == 0 ? (f) => this.firstField = f:null}
-                 onChange={this.handleChange(property.name)} />
+                 onChange={this.handleChange(property.get('name'))} />
 
     return (
       <form>

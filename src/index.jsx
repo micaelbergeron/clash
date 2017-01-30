@@ -12,10 +12,12 @@ import getMuiTheme from 'material-ui/styles/getMuiTheme';
 import Perf from 'react-addons-perf'
 import installDevTools from 'immutable-devtools'
 import Immutable from 'immutable'
+import injectTapEventPlugin from "react-tap-event-plugin";
 
 // TODO: debug switch
 // installDevTools(Immutable);
 window.Perf = Perf
+injectTapEventPlugin();
 
 // Render the main component into the dom
 render(

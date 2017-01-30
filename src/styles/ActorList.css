@@ -1,10 +1,12 @@
-:root {
-    --rowBg: #333333;
-    --rowBg-hover: lighten($row-bg, 5%);
-    --player-base: #4455BB;
-    --ennemy-base: #cc4433;
-    --allied-base: #449933;
+@import './theme-default.css';
+
+
+:export {
+    good: var(--lightblue);
+    bad: var(--red);
+    neutral: grey;
 }
+
   
 #initiative-list {
   width: 100%;
@@ -19,12 +21,6 @@
     padding-left: 0.6em;
     background: var(--rowBg);
 
-    &.ennemy {
-      border-left-color: var(--ennemy-base);
-    }
-    &.allied {
-      border-left-color: var(--allied-base);
-    }
     &.selected {
       background: color(color(var(--rowBg)) l(+3%));
 

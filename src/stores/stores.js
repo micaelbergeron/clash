@@ -11,6 +11,7 @@ import Immutable from 'immutable'
 import actors from '../reducers/actors'
 import multiplex from '../reducers/multiplex'
 import { Property } from '../models/Properties'
+import { View } from 'components/ActorListViews'
   
 
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
@@ -41,7 +42,7 @@ const store = createStore(enableBatching(reducer),
                             autoRehydrate(),
                           ));
 
-persistStore(store, { transforms: [immutableTransform()] })
+persistStore(store, { transforms: [immutableTransform({ records: [View] })] })
 
 // let just inspect the store mutations
 let unsubscribe = store.subscribe(() => console.log(store.getState()))

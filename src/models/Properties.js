@@ -1,6 +1,7 @@
 import React from 'react';
 import R from 'ramda';
 import Textfield from 'material-ui/TextField';
+import AutoComplete from 'components/material-ui/AutoComplete'; // overridden
 import { roll } from './Dice';
 import { templateOf } from './Actor'
 import Immutable from 'immutable'
@@ -14,28 +15,28 @@ const defaultProperty = Immutable.Map({
   name: undefined,
   value: undefined,
   parser: PARSER_NONE,
-  parserArgs: [],
-  config: {},  
+  parserArgs: Immutable.List(),
+  config: Immutable.Map(),  
 })
 
-export const PropertyInput = ({target, attr, inputRef, ...props}) => {
-  let property = templateOf(target).properties[attr];
-  newprops = {
-    key: attr,
-    name: attr,
-    ref: inputRef,
+export const PropertyInput = ({property, inputRef, ...props}) => {
+  if (R.contains(property.parser, [PARSER_DICE, PARSER_NONE])) {
+    return (
+      <Textfield {...props} ref={inputRef} /> 
+    )
   }
 
-  delete props.inputRef;
-  return (
-    <Textfield floatingLabelText={target[attr] ? `${attr} = ${target[attr]}` : attr} {...props} {...newprops} /> 
-  );
+  if (property.parser == PARSER_CHOICE) {
+    return (
+      <AutoComplete {...props} onUpdateInput={value => props.onChange(null, value)} openOnFocus={true} dataSource={property.parserArgs} ref={inputRef} />
+    )
+  }
 }
 
 
 export const PARSERS = {
   [PARSER_DICE]: R.compose(roll, String),
-  [PARSER_CHOICE]: (choices, value) => R.compose(x => R.findIndex(R.equals(x), choices), String)(value),
+  [PARSER_CHOICE]: (value, choices) => String(value),
   [PARSER_NONE]: R.identity,
 }
 
@@ -60,8 +61,8 @@ export const dice = (name, value=NaN, config={}) => defaultProperty.merge({
 export const choice = (choices) => (name, config={}) => defaultProperty.merge({
   name,
   parser: PARSER_CHOICE,
-  parserArgs: [choices],
-  value: choices[0],
+  parserArgs: choices,
+  value: choices[1],
   config,
 });
 

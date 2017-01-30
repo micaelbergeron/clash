@@ -67,24 +67,35 @@ body {
   background: #666;
 }
 
+.title {
+  position: relative;
+  text-align: center;
+  margin: 0;
+  padding: 0.33em;
+  border-bottom: 2px solid #666666;
+
+  & .title__hotkeys {
+    position: absolute;
+    right: 1em;
+  }
+} 	    
+
+.fill-y { height: 100%; }
+.scroll-y { overflow-y: auto; }
+.scroll-x { overflow-x: auto; }
+
 .menu__page {
   background: #333;
   height: 100%;
 
-  & .menu__title {
-    text-align: center;
-    margin: 0;
-    padding: 0.33em;
-    border-bottom: 2px solid #666666;
-  } 	    
 
   & .menu__content {
-    overflow-y: auto;
+    padding: 0.33em;
   }
 
   & .menu__actions {
-    border-left: 0.3em solid #444444;
-    padding: 0.3em;
+    border-left: 0.33em solid #444444;
+    padding: 0.33em;
   }
 
   & .menu__item {

@@ -4,4 +4,27 @@
 :root {
     --modeline-surface: #c76706;
     --font-main: "Oxygen", "Open Sans", Roboto, sans;
+
+    --black: rgb(0,0,0);
+    --orange: rgb(230,159,0);
+    --lightblue: rgb(86,180,233);
+    --green: rgb(0,158,115);
+    --yellow: rgb(240,228,66);
+    --blue: rgb(0,114,178);
+    --red: rgb(213,94,0);
+    --purple: rgb(204,121,167);
+
+    --rowBg: #333333;
 }
+
+:export {
+    black: var(--black);
+    orange: var(--orange);
+    lightblue: var(--lightblue);
+    green: var(--green);
+    yellow: var(--yellow);
+    blue: var(--blue);
+    red: var(--red);
+    purple: var(--purple);
+}
+
