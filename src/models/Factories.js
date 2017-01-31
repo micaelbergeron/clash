@@ -3,9 +3,9 @@ import * as Props from './Properties'
 
 
 export const GameObject = new ActorTemplate('object')
-  .addProperty('durability', { set: Number })
-  .addProperty('toughness', { set: Number })
-  .addProperty('notes')
+  .addProperty(Props.dice('durability'))
+  .addProperty(Props.dice('toughness'))
+  .addProperty(Props.text('notes'))
 
 export const Living = new ActorTemplate('living')
   .addProperty(Props.dice('ini', '1d20'))

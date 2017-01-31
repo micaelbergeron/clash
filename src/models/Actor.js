@@ -4,6 +4,7 @@ import R from 'ramda';
 import { parserOf } from './Properties'
 import Immutable from 'immutable' 
 
+
 export const templateOf = R.memoize(actor =>
   ActorTemplate.asTemplate(actor.get('_template').toObject())
 )

@@ -17,6 +17,7 @@ const map = {
   'multiplex': R.range(0,10).map(String),
   'view_combat': ['ctrl+m c'],
   'view_edit': ['ctrl+m e'],
+  'view_default': ['ctrl+m d'],
 }
 
 // TODO: virtualize the rendering with react-virtualized
@@ -52,6 +53,7 @@ class ActorList extends React.Component {
         let factor = 10*this.props.multiplexFactor + (event.keyCode - 48)
         this.props.onSetMultiplex(factor)
       },
+      'view_default': (event) => this.props.onChangeView('DefaultView'),
       'view_combat': (event) => this.props.onChangeView('CombatView'),
       'view_edit': (event) => this.props.onChangeView('EditView'),
     }
