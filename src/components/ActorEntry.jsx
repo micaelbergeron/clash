@@ -8,8 +8,9 @@ const Attribute = (prop, name) =>
 
 class ActorEntry extends React.PureComponent {
   shouldComponentUpdate(newProps) {
-    return this.props.actor != newProps
-        || this.props.selected != newProps.selected;
+    return this.props.actor != newProps.actor
+        || this.props.selected != newProps.selected
+        || this.props.view != newProps.view;
   }
   
   render() {
@@ -18,7 +19,7 @@ class ActorEntry extends React.PureComponent {
     const actorJs = actor.toJS()
     let selected = this.props.selected ? 'selected' : null;
 
-    const visibleAttributes = view.visibleAttrsFn(actor)
+    const visibleAttributes = view.visibleAttrsFn(actor).toJS()
     const attributes = R.compose(R.values,
                                  R.mapObjIndexed(Attribute),
                                  R.pick(visibleAttributes))

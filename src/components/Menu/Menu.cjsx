@@ -13,6 +13,7 @@ ActionList = require('./ActionList').default
 connect = require('react-redux').connect
 templateOf = require('../../models/Actor').templateOf
 playerFactory = require('../../models/Factories').Player.createFactory()
+templates = require('../../models/Factories')
 Box = require('reflexbox').Box;
 Flex = require('reflexbox').Flex;
 
@@ -25,7 +26,7 @@ MainActions = React.createClass
         title: "Add a new actor"
         action: (event) ->
          event.preventDefault()
-         @props.pager.goto CreateActor
+         @props.pager.goto SelectTemplate
       remove_actor:
         hotkey: "del"
         title: "Remove an actor"
@@ -52,7 +53,6 @@ MainActions = React.createClass
           actor_clone = templateOf(@props.actor).createFactory().create()
           @props.dispatch(A.addActor(actor_clone)) # that easy?
         enable: () -> @props.actor
-  
 
   render: ->
     <ActionList {...@props} />
@@ -109,7 +109,25 @@ ChangeActions = React.createClass
 
 ChangeActions.key = "change-actor-prop"
 
-CreateActor = React.createClass
+SelectTemplate = React.createClass
+  getDefaultProps: ->
+    title: 'Select template'
+
+  getActions: ->
+    actions = R.mapObjIndexed(((T, TName) -> {
+      hotkey: 'A',
+      title: TName,
+      action: () ->
+        @props.pager.goto CreateActor(T.createFactory())
+    }), templates)
+
+  render: ->
+    <ActionList {...@props} actions={@getActions()} />
+SelectTemplate.key = "select-template"
+ 
+
+CreateActor = (factory) -> React.createClass
+  key: "create-actor"
   getDefaultProps: ->
     title: 'New actor'
     actions:
@@ -125,7 +143,7 @@ CreateActor = React.createClass
           @props.pager.home()
 
   getInitialState: ->
-    actor: playerFactory.create()
+    actor: factory.create()
 
   handleChangeActor: (actor) ->
     # only use defined properties
@@ -135,7 +153,6 @@ CreateActor = React.createClass
     <ActionList {...@props} actor={@state.actor} >
       <ActorForm actor={@state.actor} onChangeActor={@handleChangeActor} />
     </ActionList>
-CreateActor.key = "create-actor"
 
 # A menu page holder
 Menu = React.createClass

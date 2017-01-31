@@ -2,6 +2,8 @@ import R from 'ramda'
 import { Record } from 'immutable'
 import { templateOf } from '../models/Actor'
 import style from '../styles/ActorList.css'
+import Immutable from 'immutable'
+
 
 export const View = Record({
   sortFn: a => a.get('ini'),
@@ -21,5 +23,5 @@ export const EditView = new View({
 export const CombatView = new View({
   sortFn: a => a.get('ini'),
   orderFn: a => a.get('ini'),
-  visibleAttrsFn: R.always(['name', 'hp', 'ini', 'ac']),
+  visibleAttrsFn: () => Immutable.List(['name', 'hp', 'ini', 'ac']),
 })

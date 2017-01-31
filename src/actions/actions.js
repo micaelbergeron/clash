@@ -16,14 +16,18 @@ export function batchActions(actions) {
   const unbatch = R.reduce(
     (acc, val) => R.concat(acc, flattenBatch(val)), []
   )
-  
+
   const unbatched = unbatch(actions)
+
+  // the next action batch
+  const multiplexable = unbatched[0];
   let batched = _batchActions(unbatched);
-  if (batched.payload[0].multiplex) {
+  
+  if (multiplexable.multiplex) {
     // if the first action can be multiplexed, let's forward it.
     batched.multiplex = (action, m) => batchActions([
-      batched.payload[0].multiplex(action, m), 
-      ...batched.payload.splice(1),
+      multiplexable.multiplex(multiplexable, m), // multiplex the first action
+      ...batched.payload.splice(1), // append the rest
     ])
   }
   return batched
@@ -90,7 +94,9 @@ export const addActor = notifyFor((actor) => {
 
 export const removeActor = () => {
   return {
-    multiplex: (action, m) => Object.assign(action, { count: m }),
+    multiplex: (action, m) => {
+      return Object.assign(action, { count: m })
+    },
     type: REMOVE_ACTOR,
     count: 1
   }

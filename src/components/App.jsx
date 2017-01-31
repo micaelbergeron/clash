@@ -32,10 +32,10 @@ class App extends React.Component {
         </h1>
         <HotKeys keyMap={map} className="app">
           <Menu>
-            <ActorList view={CombatView} />
+            <ActorList />
           </Menu>
         </HotKeys>
-        <ModeLine multiplex={this.props.multiplexFactor} mode={'default'} />
+        <ModeLine multiplex={this.props.multiplexFactor} view={this.props.view} />
       </main>
     );
   }
@@ -43,6 +43,7 @@ class App extends React.Component {
 
 const mapStateToProps = (state) => ({
   multiplexFactor: state.multiplex,
+  view: state.actors.get('view'),
 })
 
 export default connect(mapStateToProps)(App);
