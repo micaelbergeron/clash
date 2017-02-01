@@ -43,7 +43,7 @@ class App extends React.Component {
 
 const mapStateToProps = (state) => ({
   multiplexFactor: state.multiplex,
-  view: state.actors.get('view'),
+  view: state.actors.present.get('view'),
 })
 
 export default connect(mapStateToProps)(App);

@@ -8,6 +8,9 @@ import { connect } from 'react-redux';
 import { HotKeys } from 'react-hotkeys';
 import * as Views from 'components/ActorListViews'; 
 import * as actions from 'actions/actions';
+import * as actorActions from 'actions/actors';
+import { ActionCreators as undoActions } from 'redux-undo';
+
 
 const map = {
   'select_down': ['j', 'down'],
@@ -18,6 +21,8 @@ const map = {
   'view_combat': ['ctrl+m c'],
   'view_edit': ['ctrl+m e'],
   'view_default': ['ctrl+m d'],
+  'undo': ['ctrl+z', 'u'],
+  'redo': ['ctrl+shift+z', 'ctrl+r'],
 }
 
 // TODO: virtualize the rendering with react-virtualized
@@ -56,13 +61,16 @@ class ActorList extends React.Component {
       'view_default': (event) => this.props.onChangeView('DefaultView'),
       'view_combat': (event) => this.props.onChangeView('CombatView'),
       'view_edit': (event) => this.props.onChangeView('EditView'),
+      // these two makes no sense here
+      'undo': (event) => this.props.onUndo(),
+      'redo': (event) => { event.preventDefault(); this.props.onRedo(); },
     }
     
     let { actors, selectedActor, ...rest } = this.props;
     this.props = rest;
 
     return(
-      <HotKeys keyMap={map} handlers={handlers} attach={window} focused={true} className="fill-y scroll-y">
+      <HotKeys keyMap={map} handlers={handlers} className="fill-y scroll-y">
         <div className="title">
           <p>Actors<span className="title__hotkeys">j&nbsp;k&nbsp;/↑↓ to move</span></p>
         </div>
@@ -78,17 +86,19 @@ class ActorList extends React.Component {
 
 const ActorListView = connect(
   (state) => ({
-    actors: state.actors.get('repo'), // list?
-    selectedActor: state.actors.getIn(['repo', state.actors.get('selectedActorIndex')]), // reselect
+    actors: state.actors.present.get('repo'), // list?
+    selectedActor: state.actors.present.getIn(['repo', state.actors.present.get('selectedActorIndex')]), // reselect
     multiplexFactor: state.multiplex,
-    view: Views[state.actors.get('view')],
+    view: Views[state.actors.present.get('view')],
   }),
   (dispatch) => ({
-    onAddActor: (actor) =>          dispatch(actions.addActor(actor)),
-    onRemoveActor: (actor_or_id) => dispatch(actions.removeActor(actor_or_id)),
-    onSelectActor: (actor) =>       dispatch(actions.selectActor(actor)),
     onSetMultiplex: (factor) =>     dispatch(actions.setMultiplex(factor)),
-    onChangeView: (view) =>         dispatch(actions.changeActorsView(view)),
+    onAddActor: (actor) =>          dispatch(actorActions.addActor(actor)),
+    onRemoveActor: (actor_or_id) => dispatch(actorActions.removeActor(actor_or_id)),
+    onSelectActor: (actor) =>       dispatch(actorActions.selectActor(actor)),
+    onChangeView: (view) =>         dispatch(actorActions.changeActorsView(view)),
+    onUndo: () =>                   dispatch(undoActions.undo()),
+    onRedo: () =>                   dispatch(undoActions.redo()),
   })
 )(ActorList);
 

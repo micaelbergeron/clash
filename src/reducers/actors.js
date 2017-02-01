@@ -1,7 +1,8 @@
 import R from 'ramda'
-import * as actions from 'actions/actions'
+import * as actions from 'actions/actors'
 import Immutable from 'immutable'
 import { viewFor } from '../models/helper'
+import undoable, { includeAction, excludeAction } from 'redux-undo'
 
 
 const has_id = R.curry((id, a) => a.id == id)
@@ -12,7 +13,7 @@ const initialState = Immutable.Map({
   view: 'DefaultView',
 })
 
-export default (state=initialState, action) => {
+const actors = (state=initialState, action) => {
   let shouldReorder = true;
   const nextState = R.cond([
     [R.equals(actions.CHANGE_ACTOR), _ => {
@@ -62,3 +63,9 @@ export default (state=initialState, action) => {
   const view = viewFor(nextState.get('view'))
   return nextState.update('repo', repo => repo.sortBy(view.orderFn))
 }
+
+// TODO: extract as filterUndoable
+export default undoable(actors, {
+  limit: 10,
+  filter: action => action.undoable 
+})

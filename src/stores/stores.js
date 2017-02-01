@@ -1,7 +1,6 @@
 import R from 'ramda';
 
 import { combineReducers, createStore, applyMiddleware, compose } from 'redux'
-// import { combineReducers } from 'redux-immutable'
 import { persistStore, autoRehydrate } from 'redux-persist'
 import immutableTransform from 'redux-persist-transform-immutable'
 import { enableBatching } from 'redux-batched-actions'

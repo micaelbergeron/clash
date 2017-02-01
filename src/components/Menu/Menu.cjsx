@@ -7,6 +7,7 @@ mousetrap = require('mousetrap')
 HotKeys = require('react-hotkeys').HotKeys
 
 A = require('../../actions/actions.js')
+actorActions = require('../../actions/actors.js')
 ActorForm = require('../ActorForm').default
 ActorEditForm = require('../ActorEditForm').default
 ActionList = require('./ActionList').default
@@ -34,8 +35,8 @@ MainActions = React.createClass
           event.preventDefault()
           actor = @props.actor
           @props.dispatch(A.batchActions([
-            A.removeActor(actor), # should it know the current actor?
-            A.selectActor({ motion: 0 }),
+            actorActions.removeActor(actor), # should it know the current actor?
+            actorActions.selectActor({ motion: 0 }),
           ]))
           @props.pager.home()
         enable: () -> @props.actor
@@ -51,7 +52,7 @@ MainActions = React.createClass
         title: "Copy current actor"
         action: () ->
           actor_clone = templateOf(@props.actor).createFactory().create()
-          @props.dispatch(A.addActor(actor_clone)) # that easy?
+          @props.dispatch(actorActions.addActor(actor_clone)) # that easy?
         enable: () -> @props.actor
 
   render: ->
@@ -68,8 +69,8 @@ ChangeActions = React.createClass
         action: (event) ->
           event.preventDefault()
           @props.dispatch(A.batchActions([
-            A.changeActor(@props.actor, @props.mutation, R.add),
-            A.selectActor(@props.actor),
+            actorActions.changeActor(@props.actor, @props.mutation, R.add),
+            actorActions.selectActor(@props.actor),
           ]))
           @props.pager.home()
       subtract:
@@ -78,8 +79,8 @@ ChangeActions = React.createClass
         action: (event) ->
           event.preventDefault()
           @props.dispatch(A.batchActions([
-            A.changeActor(@props.actor, @props.mutation, R.subtract),
-            A.selectActor(@props.actor),
+            actorActions.changeActor(@props.actor, @props.mutation, R.subtract),
+            actorActions.selectActor(@props.actor),
           ]))
           @props.pager.home()
       set:
@@ -88,8 +89,8 @@ ChangeActions = React.createClass
         action: (event) ->
           event.preventDefault()
           @props.dispatch(A.batchActions([
-            A.changeActor(@props.actor, @props.mutation),
-            A.selectActor(@props.actor),
+            actorActions.changeActor(@props.actor, @props.mutation),
+            actorActions.selectActor(@props.actor),
           ]))
           @props.pager.home()
 
@@ -137,8 +138,8 @@ CreateActor = (factory) -> React.createClass
         action: () ->
           actor = @props.actor
           @props.dispatch(A.batchActions([
-            A.addActor(actor),
-            A.selectActor(actor),
+            actorActions.addActor(actor),
+            actorActions.selectActor(actor),
           ]))
           @props.pager.home()
 
