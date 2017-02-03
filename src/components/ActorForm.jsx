@@ -16,18 +16,26 @@ class ActorForm extends React.Component {
   constructor(props) {
     super(props)
 
+    this.template = templateOf(props.actor)
     this.state = {
-      form: this.props.actor.toJS()
+      form: R.map(p => p.get('value'), this.template.asMap())
     }
 
     this.handleChange = attr => (event, value) => {
       const mutation = R.objOf(attr, value)
-      let template = templateOf(this.props.actor)
-      template = template.value(attr, value)
-      // mutate the template default value if we create an ad-hoc template
-      const xform = template.createXform(this.props.actor.toJS())
-      this.setState({ form: R.merge(this.state.form, mutation) })
-      this.props.onChangeActor(this.props.actor.merge(xform[attr](value)))
+
+      // update the form inputs
+      this.setState({ form: this.state.form.merge(mutation) })
+
+      let template = templateOf(this.props.actor).value(attr, value)
+
+      // update the template of the actor before create an xform upon it
+      // I don't like this code path, I'll come with something else later
+      const nextActor = this.props.actor.setIn(['_template', 'properties'], template.properties)
+      const xform = template.createXform(nextActor.toJS())
+
+      // publish the result
+      this.props.onChangeActor(nextActor.merge(xform[attr](value)))
     }
   }
 
@@ -45,14 +53,14 @@ class ActorForm extends React.Component {
     const input_for = (property, i) =>
       <PropertyInput name={property.name}
                      property={property}
-                     value={this.state.form[property.name]}
+                     value={this.state.form.get(property.name)}
                      floatingLabelText={property.name}
                      inputRef={i == 0 ? (f) => this.firstField = f:null}
                      onChange={this.handleChange(property.name)} />
 
       return (
       <form>
-        {R.addIndex(R.map)(input_for, templateOf(actor).properties.toJS())}
+        {R.addIndex(R.map)(input_for, this.template.properties.toJS())}
       </form>
       )
   }

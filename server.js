@@ -10,7 +10,7 @@ const spawn = require('child_process').spawn;
 console.log(JSON.stringify(config, null, 2));
 
 new WebpackDevServer(webpack(config), config.devServer)
-.listen(config.port, 'localhost', (err) => {
+.listen(config.port, '0.0.0.0', (err) => {
   if (err) {
     console.log(err);
   }

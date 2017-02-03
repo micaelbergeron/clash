@@ -34,5 +34,19 @@
       height: 100%;
       transition: width 0.1s ease;
     }
+
+    & .entry__property {
+      background: grey;
+      
+      & .property__name {
+        text-transform: uppercase;
+
+        &::after { content: " " }
+      }
+
+      & .property__roll {
+        font-size: 0.66em;
+      }
+    }
   }
 }

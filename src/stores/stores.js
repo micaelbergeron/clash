@@ -39,7 +39,7 @@ const reducer = combineReducers({
 const store = createStore(enableBatching(reducer),
                           composeEnhancers(
                             applyMiddleware(multiplexMiddleware),
-                            autoRehydrate(),
+                            //autoRehydrate(),
                           ));
 
 persistStore(store, { transforms: [immutableTransform({ records: [View] })] })

@@ -49,6 +49,14 @@ export class ActorTemplate {
     return R.map(x => x.get('name'), this.properties)
   }
 
+  asMap() {
+    return R.compose(
+      Immutable.Map,
+      R.reduce(R.merge, {}),
+      R.map(prop => R.objOf(prop.get('name'), prop))
+    )(this.properties);
+  }
+
   mutableProperties() {
     return R.reject(x => x.getIn(['config', 'mutable']) === false, this.properties)
   }

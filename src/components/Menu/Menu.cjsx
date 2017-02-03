@@ -146,7 +146,6 @@ CreateActor = (factory) -> React.createClass
     actor: factory.create()
 
   handleChangeActor: (actor) ->
-    # only use defined properties
     @setState({ actor })    
 
   render: ->

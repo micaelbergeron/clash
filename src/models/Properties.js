@@ -33,7 +33,6 @@ export const PropertyInput = ({property, inputRef, ...props}) => {
   }
 }
 
-
 export const PARSERS = {
   [PARSER_DICE]: R.compose(roll, String),
   [PARSER_CHOICE]: (value, choices) => String(value),

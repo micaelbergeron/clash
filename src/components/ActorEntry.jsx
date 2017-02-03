@@ -6,6 +6,14 @@ import { templateOf } from '../models/Actor'
 const Attribute = (prop, name) =>
   <Box style={{backgroundColor: 'grey'}} key={name} col={2} m={1} p={1}>{`${name}: ${prop}`}</Box>
 
+const AttributeWithRoll = (properties) => (prop, name) => (
+  <Flex justify="space-between" className="entry__property" key={name} col={2} m={1} p={1}>
+    <Box><span className="property__name">{`${name}`}</span> {prop}</Box>
+    <Box className="property__roll">{properties.getIn([name, 'value'])}</Box>
+  </Flex>
+);
+  
+
 class ActorEntry extends React.PureComponent {
   shouldComponentUpdate(newProps) {
     return this.props.actor != newProps.actor
@@ -17,11 +25,13 @@ class ActorEntry extends React.PureComponent {
     let { actor, view } = this.props
     const template = templateOf(actor)
     const actorJs = actor.toJS()
+    const Component = AttributeWithRoll(template.asMap())
+
     let selected = this.props.selected ? 'selected' : null;
 
     const visibleAttributes = view.visibleAttrsFn(actor).toJS()
     const attributes = R.compose(R.values,
-                                 R.mapObjIndexed(Attribute),
+                                 R.mapObjIndexed(Component),
                                  R.pick(visibleAttributes))
     
     // TODO: tag system
