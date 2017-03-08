@@ -3,6 +3,7 @@ A = require('../../actions/actions')
 connect = require('react-redux').connect
 Menu = require('./Menu').Menu
 
+
 mapStateToProps = (state) ->
   actor: state.actors.getIn(['repo', state.actors.get('selectedActorIndex')])
 

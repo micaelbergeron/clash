@@ -5,11 +5,8 @@ import { connect } from 'react-redux';
 import Actor from '../models/Actor';
 import * as A from 'actions/actions';
 import Textfield from 'material-ui/TextField';
-import { PropertyInput } from '../models/Properties';
-import { Player } from '../models/Factories';
-import { templateOf } from '../models/Actor';
-
-const playerFactory = Player.createFactory();
+import { PropertyInput } from 'models/Properties';
+import { templateOf } from 'models/Actor';
 
 
 class ActorForm extends React.Component {

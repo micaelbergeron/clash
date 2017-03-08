@@ -18,6 +18,7 @@ import Folder from 'material-ui/svg-icons/file/folder'
 import { selectActor } from 'actions/actions.js';
 import { CombatView } from './ActorListViews'
 
+
 const map = {
   'cancel': ['esc', 'ctrl+g'],
 }

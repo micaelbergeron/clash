@@ -2,6 +2,7 @@
 'use strict';
 require('core-js/fn/object/assign');
 const webpack = require('webpack');
+const Watchpack = require('watchpack');
 const WebpackDevServer = require('webpack-dev-server');
 const config = require('./webpack.config');
 const open = require('open');
@@ -18,3 +19,11 @@ new WebpackDevServer(webpack(config), config.devServer)
   console.log('Opening your system browser...');
   open('http://localhost:' + config.port + '/webpack-dev-server/');
 });
+
+
+const templateWatcher = new Watchpack()
+templateWatcher.watch([], ['templates']);
+templateWatcher.on("change", function(filePath, mtime) {
+  console.info(arguments);
+})
+

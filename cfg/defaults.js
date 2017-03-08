@@ -19,9 +19,10 @@ function getDefaultModules() {
   return {
     preLoaders: [
       {
-        test: /\.(js|jsx)$/,
+        test: /\.(js|jsx)$/, 
         include: srcPath,
-        loader: 'eslint-loader'
+        loader: 'eslint-loader',
+        options: { fix: true }
       }
     ],
     loaders: [
@@ -45,7 +46,8 @@ function getDefaultModules() {
       { test: /\.pegjs$/, loader: 'pegjs-loader' },
       { test: /\.svg$/, loader: 'svg-sprite?' + JSON.stringify({name: '[name]_[hash]'}) } 
     ],
-    plugins: [],
+    plugins: [
+    ],
   };
 }
 

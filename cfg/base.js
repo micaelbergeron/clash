@@ -12,7 +12,8 @@ module.exports = {
   output: {
     path: path.join(__dirname, '/../dist/assets'),
     filename: 'app.js',
-    publicPath: defaultSettings.publicPath
+    publicPath: defaultSettings.publicPath,
+    libraryTarget: 'umd',
   },
   devServer: {
     contentBase: './src/',
@@ -30,6 +31,8 @@ module.exports = {
       sources: `${defaultSettings.srcPath}/sources/`,
       stores: `${defaultSettings.srcPath}/stores/`,
       styles: `${defaultSettings.srcPath}/styles/`,
+      models: `${defaultSettings.srcPath}/models/`,
+      reducers: `${defaultSettings.srcPath}/reducers/`,
       config: `${defaultSettings.srcPath}/config/` + process.env.REACT_WEBPACK_ENV
     }
   },

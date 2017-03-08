@@ -1,6 +1,6 @@
 import { batchActions as _batchActions } from 'redux-batched-actions'
 import R from 'ramda'
-import { factoryOf } from '../models/Actor'
+import { factoryOf } from 'models/Actor'
 import * as Views from 'components/ActorListViews'
 
 export function batchActions(actions) {

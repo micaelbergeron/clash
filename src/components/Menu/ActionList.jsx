@@ -33,14 +33,20 @@ export default class ActionList extends React.Component {
         )
       }
     }
+
+    // let's prevent inputs that trigger actions
+    const handlerFor = action => event => {
+      event.preventDefault()
+      action.action.call(this, event)
+    }
     
     let { actions } = this.props
-    let map = R.map(a => a.hotkey, actions)
-    let handlers = R.map(a => (event) => a.action.call(this, event), actions)
+    let actionsByHotkeys = R.map(a => a.hotkey, actions)    
+    let handlers = R.map(handlerFor, actions)
     let items = R.compose(R.values, R.mapObjIndexed(ActionListItem.bind(this)))
 
     return (
-      <HotKeys keyMap={map} handlers={handlers} focused={true} attach={this.menu} >
+      <HotKeys keyMap={actionsByHotkeys} handlers={handlers} focused={true} attach={this.menu} >
         <p className="title">{this.props.title}</p>
         {this.props.children}
         <div rel="action-list">

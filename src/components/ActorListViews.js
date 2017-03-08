@@ -1,6 +1,6 @@
 import R from 'ramda'
 import { Record } from 'immutable'
-import { templateOf } from '../models/Actor'
+import { templateOf } from 'models/Actor'
 import style from '../styles/ActorList.css'
 import Immutable from 'immutable'
 

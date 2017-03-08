@@ -219,7 +219,7 @@ class AutoComplete extends Component {
     this.requestsList = [];
     this.setState({
       open: this.props.open,
-      searchText: this.props.searchText,
+      searchText: this.props.value,
     });
     this.timerTouchTapCloseId = null;
   }

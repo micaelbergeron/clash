@@ -10,10 +10,10 @@ A = require('../../actions/actions.js')
 ActorForm = require('../ActorForm').default
 ActorEditForm = require('../ActorEditForm').default
 ActionList = require('./ActionList').default
+SelectTemplate = require('./SelectTemplate').default
+CreateActor = require('./CreateActor').default
 connect = require('react-redux').connect
 templateOf = require('../../models/Actor').templateOf
-playerFactory = require('../../models/Factories').Player.createFactory()
-templates = require('../../models/Factories')
 Box = require('reflexbox').Box;
 Flex = require('reflexbox').Flex;
 
@@ -109,49 +109,7 @@ ChangeActions = React.createClass
 
 ChangeActions.key = "change-actor-prop"
 
-SelectTemplate = React.createClass
-  getDefaultProps: ->
-    title: 'Select template'
 
-  getActions: ->
-    actions = R.mapObjIndexed(((T, TName) -> {
-      hotkey: 'A',
-      title: TName,
-      action: () ->
-        @props.pager.goto CreateActor(T.createFactory())
-    }), templates)
-
-  render: ->
-    <ActionList {...@props} actions={@getActions()} />
-SelectTemplate.key = "select-template"
- 
-
-CreateActor = (factory) -> React.createClass
-  key: "create-actor"
-  getDefaultProps: ->
-    title: 'New actor'
-    actions:
-      create:
-        hotkey: ['enter', 'ctrl+k']
-        title: 'Create'
-        action: () ->
-          actor = @props.actor
-          @props.dispatch(A.batchActions([
-            A.addActor(actor),
-            A.selectActor(actor),
-          ]))
-          @props.pager.home()
-
-  getInitialState: ->
-    actor: factory.create()
-
-  handleChangeActor: (actor) ->
-    @setState({ actor })    
-
-  render: ->
-    <ActionList {...@props} actor={@state.actor} >
-      <ActorForm actor={@state.actor} onChangeActor={@handleChangeActor} />
-    </ActionList>
 
 # A menu page holder
 Menu = React.createClass
@@ -199,6 +157,8 @@ Menu = React.createClass
       </Box>
     </HotKeys>
 
+
 module.exports =
   Menu: Menu
+  CreateActor: CreateActor
 

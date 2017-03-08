@@ -2,9 +2,9 @@ import React from 'react';
 import R from 'ramda';
 import * as A from 'actions/actions';
 import Textfield from 'material-ui/TextField';
-import { PropertyInput } from '../models/Properties';
+import { PropertyInput } from 'models/Properties';
 import { withReflex, Flex, Box } from 'reflexbox';
-import { templateOf } from '../models/Actor';
+import { templateOf } from 'models/Actor';
 
 
 export default class ActorEditForm extends React.Component {

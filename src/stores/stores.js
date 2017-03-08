@@ -8,9 +8,10 @@ import { enableBatching } from 'redux-batched-actions'
 import { batchActions, setMultiplex } from 'actions/actions'
 import Immutable from 'immutable'
 
-import actors from '../reducers/actors'
-import multiplex from '../reducers/multiplex'
-import { Property } from '../models/Properties'
+import actors from 'reducers/actors'
+import multiplex from 'reducers/multiplex'
+import templates from 'reducers/templates'
+import { Property } from 'models/Properties'
 import { View } from 'components/ActorListViews'
   
 
@@ -33,6 +34,7 @@ const multiplexMiddleware = store => next => action => {
 const reducer = combineReducers({
   actors,
   multiplex,
+  templates,
 })
 
 // the main store

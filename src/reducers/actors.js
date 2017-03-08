@@ -1,7 +1,7 @@
 import R from 'ramda'
 import * as actions from 'actions/actions'
 import Immutable from 'immutable'
-import { viewFor } from '../models/helper'
+import { viewFor } from 'models/helper'
 
 
 const has_id = R.curry((id, a) => a.id == id)
