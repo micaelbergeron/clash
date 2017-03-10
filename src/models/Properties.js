@@ -21,16 +21,19 @@ const defaultProperty = Immutable.Map({
 })
 
 export const PropertyInput = ({property, inputRef, ...props}) => {
-  if (R.contains(property.parser, [PARSER_DICE, PARSER_CHECK, PARSER_NONE])) {
-    return (
-      <Textfield {...props} ref={inputRef} /> 
-    )
-  }
+  switch(property.parser) {
+    case PARSER_CHECK:
+      return <Textfield {...props} floatingLabelText={props.floatingLabelText + " (check)"}  ref={inputRef} /> 
 
-  if (property.parser == PARSER_CHOICE) {
-    return (
-      <AutoComplete {...props} onUpdateInput={value => props.onChange(null, value)} openOnFocus={true} dataSource={property.parserArgs} ref={inputRef} />
-    )
+    case PARSER_CHOICE:
+      return <AutoComplete {...props} onUpdateInput={value => props.onChange(null, value)} openOnFocus={true} dataSource={property.parserArgs} ref={inputRef} />
+
+    case PARSER_NONE:
+    case PARSER_DICE:
+      return <Textfield {...props} ref={inputRef} /> 
+
+    default:
+      throw new Exception("Unknown property type.")
   }
 }
 
