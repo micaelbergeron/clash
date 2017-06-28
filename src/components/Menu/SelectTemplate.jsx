@@ -32,7 +32,7 @@ class SelectTemplate extends React.Component {
   }
   
   render() {
-    return <ActionList {...this.props} actions={this.getActions()} />
+    return <ActionList title="Select a template" {...this.props} actions={this.getActions()} />
   }
 }
 

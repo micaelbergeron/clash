@@ -12,10 +12,12 @@ ActorEditForm = require('../ActorEditForm').default
 ActionList = require('./ActionList').default
 SelectTemplate = require('./SelectTemplate').default
 CreateActor = require('./CreateActor').default
+RollActor = require('./RollActor').default
 connect = require('react-redux').connect
 templateOf = require('../../models/Actor').templateOf
 Box = require('reflexbox').Box;
 Flex = require('reflexbox').Flex;
+
 
 MainActions = React.createClass
   getDefaultProps: ->
@@ -30,6 +32,7 @@ MainActions = React.createClass
       remove_actor:
         hotkey: "del"
         title: "Remove an actor"
+        enable: () -> @props.actor
         action: (event) ->
           event.preventDefault()
           actor = @props.actor
@@ -38,14 +41,13 @@ MainActions = React.createClass
             A.selectActor({ motion: 0 }),
           ]))
           @props.pager.home()
-        enable: () -> @props.actor
       change_actor:
         hotkey: "m"
         title: "Change current actor"
+        enable: () -> @props.actor
         action: (event) ->
           event.preventDefault()
           @props.pager.goto ChangeActions
-        enable: () -> @props.actor
       copy_actor: # TODO: make a register system
         hotkey: "y y"
         title: "Copy current actor"
@@ -53,17 +55,25 @@ MainActions = React.createClass
           actor_clone = templateOf(@props.actor).createFactory().create()
           @props.dispatch(A.addActor(actor_clone)) # that easy?
         enable: () -> @props.actor
+      roll_actor:
+        hotkey: "r"
+        title: "Roll an actor"
+        enable: () -> @props.actor
+        action: (event) ->
+          event.preventDefault()
+          @props.pager.goto RollActor
 
   render: ->
     <ActionList {...@props} />
 MainActions.key = "main"
+
 
 ChangeActions = React.createClass
   getDefaultProps: ->
     title: "Change actor"
     actions:
       add:
-        hotkey: ['ctrl+a', '+']
+        hotkey: ['ctrl+a']
         title: 'Add'
         action: (event) ->
           event.preventDefault()
@@ -73,7 +83,7 @@ ChangeActions = React.createClass
           ]))
           @props.pager.home()
       subtract:
-        hotkey: ['ctrl+x', '-']
+        hotkey: ['ctrl+x']
         title: 'Subtract'
         action: (event) ->
           event.preventDefault()
@@ -106,9 +116,7 @@ ChangeActions = React.createClass
     <ActionList {...@props} {...@state}>
       <ActorEditForm actor={@props.actor} onChangeActor={@handleChangeActor} />
     </ActionList>
-
 ChangeActions.key = "change-actor-prop"
-
 
 
 # A menu page holder
@@ -144,7 +152,8 @@ Menu = React.createClass
   componentWillUpdate: (nextProps, nextState) ->
     if (nextState.componentTree.length > 1)
       this.handlers =
-        cancel: @navigateBack
+        cancel: -> console.log("menu back")
+          
 
   render: ->
     currentPage = @buildPage(_.last(@state.componentTree))

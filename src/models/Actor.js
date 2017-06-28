@@ -81,9 +81,15 @@ export class ActorTemplate {
 
   value(name, value) {
     const idx = this.properties.findIndex(x => x.get('name') === name)
-    if (idx !== -1) {
+    if (idx == -1) throw `${name} is undefined in current template`;
+
+    if (value !== undefined) {
       this.properties = this.properties.update(idx, p => p.set('value', value))
     }
+    else {
+      return this.properties.get(idx).get('value')
+    }
+    
     return this
   }
   

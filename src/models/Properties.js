@@ -7,10 +7,10 @@ import { templateOf } from './Actor'
 import Immutable from 'immutable'
 
 
-const PARSER_DICE = 'DICE';
-const PARSER_CHECK = 'CHECK';
-const PARSER_CHOICE = 'CHOICE';
-const PARSER_NONE = 'NONE';
+export const PARSER_DICE = 'DICE';
+export const PARSER_CHECK = 'CHECK';
+export const PARSER_CHOICE = 'CHOICE';
+export const PARSER_NONE = 'NONE';
 
 const defaultProperty = Immutable.Map({
   name: undefined,
@@ -37,6 +37,10 @@ export const PropertyInput = ({property, inputRef, ...props}) => {
   }
 }
 
+// parser are functions that return a value that must be set to the actor for a certain input
+// there should be some validation state up there, by returning a certain value or setting
+// the validation into the object
+//   current_value? -> input -> new_value
 export const PARSERS = {
   [PARSER_DICE]: R.compose(roll, String),
   [PARSER_CHOICE]: (value, choices) => String(value),

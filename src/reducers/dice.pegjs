@@ -4,13 +4,16 @@
  *
  * Accepts expressions like "2 * (3 + 4)" and computes their value.
  * Also accepts Dice notation
+ * Also accepts implicit expression notation
  */
 
 {
   var MT = require('mersennetwister');
   var _ = require('lodash');
 
-  function roll(faces) { return Math.floor(MT.random() * (faces)) + 1; }
+  function roll(faces) {
+    return Math.floor(MT.random() * faces) + 1;
+  }
 }
 
 Expression

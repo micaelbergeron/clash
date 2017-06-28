@@ -27,4 +27,3 @@ export const Player = new ActorTemplate('player', NPC.properties)
   .addProperty(Props.text('name'))
   .value('side', 'good')
 
-
