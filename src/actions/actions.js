@@ -4,7 +4,7 @@ import { factoryOf } from '../models/Actor'
 import * as Views from 'components/ActorListViews'
 
 export function batchActions(actions) {
-  // action -> [actions]
+  // [actions] -> action
   const flattenBatch = R.compose(
     R.ifElse(
       R.propEq('type', 'BATCHING_REDUCER.BATCH'),
@@ -22,7 +22,7 @@ export function batchActions(actions) {
   // the next action batch
   const multiplexable = unbatched[0];
   let batched = _batchActions(unbatched);
-  
+
   if (multiplexable.multiplex) {
     // if the first action can be multiplexed, let's forward it.
     batched.multiplex = (action, m) => batchActions([
@@ -34,14 +34,14 @@ export function batchActions(actions) {
 }
 
 const multiplex = fn => apply => _ => {
-  const action = Object.assign({meta: {}}, fn.apply(null, arguments))   
+  const action = Object.assign({meta: {}}, fn.apply(null, arguments))
   return multiplex => apply(action, multiplex)
 }
 
 const timesMultiplex = (action, m) => {
   action.meta.times = m
   return action
-}    
+}
 
 
 const notifyFor = (actionCreator) => (...args) => {
@@ -151,7 +151,7 @@ export function selectActor(selector) {
   }
 
   if (!parsed) throw "Invalid selector, valid keys are 'motion', 'relative' or 'id'.";
-  
+
   return {
     multiplex: (action, m) => {
       if (action.motion.type === 'relative'
@@ -174,7 +174,7 @@ export const changeActorsView = (viewName) => ({
 
 // the multiplex is a value the multiplexMiddleware will use to mutate actions on-the-fly
 // so they are applied N times.
-// i.e: issuing a delete statement 
+// i.e: issuing a delete statement
 export function setMultiplex(factor) {
   return {
     type: SET_MULTIPLEX,

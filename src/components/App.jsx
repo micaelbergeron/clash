@@ -9,14 +9,14 @@ import R from 'ramda';
 import ReactDOM from 'react-dom';
 import { connect } from 'react-redux';
 
-import ActorList from './ActorList';
-import Menu from './Menu/MenuView';
-import ModeLine from './ModeLine';
+import ActorList from 'components/ActorList';
+import Menu from 'components/Menu/MenuView';
+import ModeLine from 'components/ModeLine';
 import { IconButton } from 'material-ui'
 import Folder from 'material-ui/svg-icons/file/folder'
 
 import { selectActor } from 'actions/actions.js';
-import { CombatView } from './ActorListViews'
+import { CombatView } from 'components/ActorListViews'
 
 const map = {
   'cancel': ['esc', 'ctrl+g'],

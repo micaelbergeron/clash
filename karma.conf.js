@@ -5,8 +5,9 @@ module.exports = function(config) {
     basePath: '',
     browsers: [ 'PhantomJS' ],
     files: [
-      'test/loadtests.js'
+      'test/loadtests.js',
     ],
+    exclude: ['*.pegjs'],
     port: 8080,
     captureTimeout: 60000,
     frameworks: [ 'mocha', 'chai' ],
@@ -16,7 +17,10 @@ module.exports = function(config) {
     singleRun: true,
     reporters: [ 'mocha', 'coverage' ],
     preprocessors: {
-      'test/loadtests.js': [ 'webpack', 'sourcemap' ]
+      'test/**/*.js': [ 'webpack' ],
+      'lib/**/*.js': [ 'webpack' ],
+      'src/**/*.js': [ 'webpack' ],
+      'src/**/*.jsx': [ 'webpack' ]
     },
     webpack: webpackCfg,
     webpackServer: {

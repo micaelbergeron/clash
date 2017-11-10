@@ -32,14 +32,28 @@ module.exports = {
           baseConfig.additionalPaths,
           [
             path.join(__dirname, '/../src'),
+            path.join(__dirname, '/../lib'),
             path.join(__dirname, '/../test')
           ]
         )
-      }
+      },
+      {
+        test: /\.pegjs$/,
+        loader: 'pegjs-loader',
+      },
+      {
+        test: /\.cjsx$/,
+        loaders: ["coffee", "cjsx"]
+      },
+      { test: /\.coffee$/, loader: 'coffee' },
     ]
   },
   resolve: {
-    extensions: [ '', '.js', '.jsx' ],
+    extensions: ['', '.js', '.jsx', '.cjsx', '.coffee', 'pegjs'],
+    root: [
+      path.resolve('./src'),
+      path.resolve('./lib')
+    ],
     alias: {
       actions: srcPath + 'actions/',
       helpers: path.join(__dirname, '/../test/helpers'),

@@ -42,10 +42,16 @@ function getDefaultModules() {
         loaders: ["coffee", "cjsx"]
       },
       { test: /\.coffee$/, loader: 'coffee' },
-      { test: /\.pegjs$/, loader: 'pegjs-loader' },
-      { test: /\.svg$/, loader: 'svg-sprite?' + JSON.stringify({name: '[name]_[hash]'}) } 
+      { test: /\.pegjs$/, loader: 'pegjs-loader', include: path.join(__dirname, '/../lib') },
+      { test: /\.svg$/, loader: 'svg-sprite?' + JSON.stringify({name: '[name]_[hash]'}) }
     ],
-    plugins: [],
+    plugins: [
+      new webpack.ProvidePlugin({
+        React: 'react',
+        R: 'ramda',
+        _: 'lodash'
+      })
+    ],
   };
 }
 

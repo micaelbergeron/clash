@@ -5,7 +5,9 @@ let defaultSettings = require('./defaults');
 // let additionalPaths = [ path.join(npmBase, 'react-bootstrap') ];
 
 module.exports = {
-  additionalPaths: [],
+  additionalPaths: [
+    path.join(__dirname, '../lib'),
+  ],
   port: defaultSettings.port,
   debug: true,
   devtool: 'eval',
@@ -24,6 +26,10 @@ module.exports = {
   },
   resolve: {
     extensions: ['', '.js', '.jsx', '.cjsx', '.coffee', 'pegjs'],
+    root: [
+      path.resolve('./src'),
+      path.resolve('./lib')
+    ],
     alias: {
       actions: `${defaultSettings.srcPath}/actions/`,
       components: `${defaultSettings.srcPath}/components/`,

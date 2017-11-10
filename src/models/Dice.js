@@ -1,5 +1,5 @@
 import R from 'ramda'
-import { parse as parseDice } from '../reducers/dice.pegjs'
+import { parse as parseDice } from 'dice.pegjs'
 
 
 export const roll = R.tryCatch(parseDice, R.always(NaN))
@@ -15,4 +15,3 @@ export default class Dice {
     return this
   }
 }
-
